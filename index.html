@@ -947,6 +947,18 @@
   .stats-row .name{ flex:1; font-size:13px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .stats-row .num{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px; color:var(--ink); flex-shrink:0; }
   .total-row span:last-child{ font-family:'JetBrains Mono',monospace; }
+  .order-row{
+    display:flex; align-items:center; gap:10px;
+    padding:9px 12px; background:#f5f5f5; border-radius:8px; margin-bottom:6px;
+  }
+  .order-row .num{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12px; color:var(--text-muted); width:18px; flex-shrink:0; }
+  .order-row .name{ flex:1; font-size:13.5px; font-weight:600; }
+  .order-row .arrows{ display:flex; gap:4px; }
+  .order-row .arrows button{
+    width:28px; height:28px; border-radius:6px; border:1px solid var(--line); background:var(--paper);
+    color:var(--ink); font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .order-row .arrows button:disabled{ opacity:0.3; cursor:default; }
   .checkout-btn{
     width:100%; background:var(--ink); color:var(--yellow); border:none; padding:15px;
     border-radius:10px; font-weight:800; font-size:14.5px; cursor:pointer; letter-spacing:0.3px;
@@ -1181,6 +1193,7 @@
       <button class="admin-tab" data-tab="redes">Redes</button>
       <button class="admin-tab" data-tab="cupones">Cupones</button>
       <button class="admin-tab" data-tab="estadisticas">Estadísticas</button>
+      <button class="admin-tab" data-tab="orden">Orden</button>
     </div>
     <div class="admin-body" id="tab-productos">
       <button class="new-product-btn" id="newProductBtn">+ Nuevo producto</button>
@@ -1394,6 +1407,14 @@
       </div>
       <small style="display:block; margin-top:6px;">Las vistas suben cada vez que alguien abre el detalle de un producto. Las ventas suben cuando un cliente finaliza una compra.</small>
     </div>
+    <div class="admin-body" id="tab-orden" style="display:none;">
+      <div class="field">
+        <label>Orden de las secciones del inicio</label>
+        <small style="display:block; margin-bottom:8px;">El catálogo de productos siempre queda al final. Usa las flechas para cambiar el orden de lo de arriba.</small>
+        <div id="sectionOrderList"></div>
+      </div>
+      <button class="form-save" id="sectionOrderSaveBtn" style="margin-top:12px;">Guardar orden</button>
+    </div>
   </div>
 </div>
 
@@ -1420,6 +1441,11 @@
         <label>Tallas</label>
         <input type="text" id="fSizes" placeholder="S, M, L, XL">
         <small>Sepáralas con comas</small>
+      </div>
+      <div class="field">
+        <label>Nombre de la etiqueta</label>
+        <input type="text" id="fSizeLabel" placeholder="Talla" maxlength="20">
+        <small>Por si este producto no se mide en "Talla" — ej. "Medida", "Tamaño". Déjalo vacío para usar "Talla".</small>
       </div>
       <div class="field">
         <label>Colores</label>
@@ -1598,7 +1624,8 @@ const DEFAULT_THEME = {
   categoryImages: {},
   catDisplayStyle: "circles",
   carouselSlides: [],
-  coupons: []
+  coupons: [],
+  sectionOrder: ["hero","stories","catgrid","carousel"]
 };
 let currentTheme = JSON.parse(JSON.stringify(DEFAULT_THEME));
 
@@ -1685,6 +1712,23 @@ function updateCategoryView(){
   updateCategoryVisibility();
   document.getElementById('grid-wrap').scrollIntoView({behavior:'smooth', block:'start'});
 }
+const REORDERABLE_SECTIONS = [
+  { id:'hero', label:'Banner principal', selector:'.hero' },
+  { id:'stories', label:'Destacados', selector:'#stories-wrap-section' },
+  { id:'catgrid', label:'Categorías', selector:'#catGridWrap' },
+  { id:'carousel', label:'Carrusel promocional', selector:'#promoCarouselWrap' }
+];
+function applySectionOrder(){
+  const order = (currentTheme.sectionOrder && currentTheme.sectionOrder.length) ? currentTheme.sectionOrder : DEFAULT_THEME.sectionOrder;
+  const anchor = document.getElementById('filterBar');
+  if(!anchor) return;
+  order.forEach(id=>{
+    const meta = REORDERABLE_SECTIONS.find(s=>s.id===id);
+    const el = meta && document.querySelector(meta.selector);
+    if(el) anchor.parentNode.insertBefore(el, anchor);
+  });
+}
+
 function updateCategoryVisibility(){
   const isHome = activeCat === 'Todos';
   const hero = document.querySelector('.hero');
@@ -1873,7 +1917,7 @@ function renderDrawer(){
         <img src="${p.img}" alt="${p.name}">
         <div class="ci-info">
           <span class="ci-name">${p.name}</span>
-          <span class="ci-meta">Talla ${c.size} · ${c.color}</span>
+          <span class="ci-meta">${p.sizeLabel || 'Talla'} ${c.size} · ${c.color}</span>
           <div class="ci-row">
             <div class="qty-ctrl">
               <button data-idx="${idx}" data-act="dec">−</button>
@@ -2182,7 +2226,7 @@ function renderPdSelectors(p){
   const wrap = document.getElementById('pdSelectors');
   wrap.innerHTML = `
     <div class="sel-row">
-      <span class="sel-label">Talla</span>
+      <span class="sel-label">${p.sizeLabel || 'Talla'}</span>
       ${p.sizes.map(s=>`<button class="size-opt ${s===sel.size?'active':''}" data-size="${s}">${s}</button>`).join('')}
     </div>
     <div class="sel-row">
@@ -2463,10 +2507,10 @@ updateHeartIcon();
 initAuth();
 
 function rowToProduct(row){
-  return { id: row.id, name: row.name, cat: row.cat, price: Number(row.price), sizes: row.sizes, colors: row.colors, img: row.img, desc: row.description || '', featured: !!row.featured, badge: row.badge || '', stock: (row.stock===null || row.stock===undefined) ? null : Number(row.stock), reviews: row.reviews || [], views: Number(row.views)||0, sold: Number(row.sold)||0, flashDiscount: (row.flash_discount===null||row.flash_discount===undefined) ? null : Number(row.flash_discount), flashEndsAt: row.flash_ends_at || null };
+  return { id: row.id, name: row.name, cat: row.cat, price: Number(row.price), sizes: row.sizes, colors: row.colors, img: row.img, desc: row.description || '', featured: !!row.featured, badge: row.badge || '', stock: (row.stock===null || row.stock===undefined) ? null : Number(row.stock), reviews: row.reviews || [], views: Number(row.views)||0, sold: Number(row.sold)||0, flashDiscount: (row.flash_discount===null||row.flash_discount===undefined) ? null : Number(row.flash_discount), flashEndsAt: row.flash_ends_at || null, sizeLabel: row.size_label || 'Talla' };
 }
 function productToRow(p){
-  return { name: p.name, cat: p.cat, price: p.price, sizes: p.sizes, colors: p.colors, img: p.img, description: p.desc, featured: !!p.featured, badge: p.badge || '', stock: (p.stock===null || p.stock===undefined || p.stock==='') ? null : Number(p.stock), reviews: p.reviews || [], views: Number(p.views)||0, sold: Number(p.sold)||0, flash_discount: (p.flashDiscount===null||p.flashDiscount===undefined||p.flashDiscount==='') ? null : Number(p.flashDiscount), flash_ends_at: p.flashEndsAt || null };
+  return { name: p.name, cat: p.cat, price: p.price, sizes: p.sizes, colors: p.colors, img: p.img, description: p.desc, featured: !!p.featured, badge: p.badge || '', stock: (p.stock===null || p.stock===undefined || p.stock==='') ? null : Number(p.stock), reviews: p.reviews || [], views: Number(p.views)||0, sold: Number(p.sold)||0, flash_discount: (p.flashDiscount===null||p.flashDiscount===undefined||p.flashDiscount==='') ? null : Number(p.flashDiscount), flash_ends_at: p.flashEndsAt || null, size_label: p.sizeLabel || 'Talla' };
 }
 
 /* ---------- PERSISTENCIA DE PRODUCTOS (Supabase) ---------- */
@@ -2646,6 +2690,7 @@ function openForm(id){
   catSel.value = p ? p.cat : currentTheme.categories[0];
   document.getElementById('fPrice').value = p ? p.price : '';
   document.getElementById('fSizes').value = p ? p.sizes.join(', ') : '';
+  document.getElementById('fSizeLabel').value = p ? (p.sizeLabel && p.sizeLabel !== 'Talla' ? p.sizeLabel : '') : '';
   document.getElementById('fImg').value = p ? p.img : '';
   document.getElementById('fImgFile').value = '';
   document.getElementById('fDesc').value = p ? (p.desc || '') : '';
@@ -2732,6 +2777,7 @@ document.getElementById('formSaveBtn')?.addEventListener('click', async ()=>{
   const cat = document.getElementById('fCat').value;
   const price = parseFloat(document.getElementById('fPrice').value);
   const sizes = document.getElementById('fSizes').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const sizeLabel = document.getElementById('fSizeLabel').value.trim() || 'Talla';
   const img = document.getElementById('fImg').value.trim() || 'https://picsum.photos/seed/prezzir'+Date.now()+'/400/500';
   const desc = document.getElementById('fDesc').value.trim();
   let featured = document.getElementById('fFeatured').checked;
@@ -2770,13 +2816,13 @@ document.getElementById('formSaveBtn')?.addEventListener('click', async ()=>{
 
   if(editingId){
     const p = PRODUCTS.find(x=>x.id===editingId);
-    Object.assign(p, {name, cat, price, sizes, colors, img, desc, featured, badge, stock, flashDiscount, flashEndsAt});
+    Object.assign(p, {name, cat, price, sizes, colors, img, desc, featured, badge, stock, flashDiscount, flashEndsAt, sizeLabel});
     await updateProductInDB(p);
     if(!sizes.includes(selections[p.id]?.size)) selections[p.id].size = sizes[0];
     if(!colors.some(c=>c[0]===selections[p.id]?.color)) selections[p.id].color = colors[0][0];
     showToast('Producto actualizado');
   }else{
-    const saved = await insertProductToDB({name, cat, price, sizes, colors, img, desc, featured, badge, stock, flashDiscount, flashEndsAt});
+    const saved = await insertProductToDB({name, cat, price, sizes, colors, img, desc, featured, badge, stock, flashDiscount, flashEndsAt, sizeLabel});
     if(saved){
       PRODUCTS.push(saved);
       selections[saved.id] = {size:sizes[0], color:colors[0][0]};
@@ -2795,7 +2841,7 @@ document.getElementById('formSaveBtn')?.addEventListener('click', async ()=>{
 });
 
 /* ---------- PESTAÑAS DEL PANEL ADMIN ---------- */
-const TAB_IDS = ['productos','categorias','estilo','tipografia','tamanos','banner','redes','cupones','estadisticas'];
+const TAB_IDS = ['productos','categorias','estilo','tipografia','tamanos','banner','redes','cupones','estadisticas','orden'];
 document.querySelectorAll('.admin-tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
@@ -2811,6 +2857,7 @@ document.querySelectorAll('.admin-tab').forEach(tab=>{
     if(tab.dataset.tab==='redes') fillSocialForm();
     if(tab.dataset.tab==='cupones') renderCouponManageList();
     if(tab.dataset.tab==='estadisticas') renderStatsTab();
+    if(tab.dataset.tab==='orden') renderSectionOrderList();
   });
 });
 
@@ -2830,6 +2877,41 @@ function renderStatsTab(){
   mostViewed.innerHTML = rowsHtml(byViews, 'views', 'vistas');
   mostSold.innerHTML = rowsHtml(bySold, 'sold', 'vendidos');
 }
+
+/* ---------- ORDEN DE SECCIONES ---------- */
+function renderSectionOrderList(){
+  const wrap = document.getElementById('sectionOrderList');
+  if(!wrap) return;
+  const order = (currentTheme.sectionOrder && currentTheme.sectionOrder.length) ? currentTheme.sectionOrder : DEFAULT_THEME.sectionOrder;
+  wrap.innerHTML = order.map((id,i)=>{
+    const meta = REORDERABLE_SECTIONS.find(s=>s.id===id);
+    if(!meta) return '';
+    return `
+    <div class="order-row">
+      <span class="num">${i+1}</span>
+      <span class="name">${meta.label}</span>
+      <div class="arrows">
+        <button data-i="${i}" data-dir="up" ${i===0 ? 'disabled' : ''}>↑</button>
+        <button data-i="${i}" data-dir="down" ${i===order.length-1 ? 'disabled' : ''}>↓</button>
+      </div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('button[data-dir]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const i = parseInt(btn.dataset.i);
+      const dir = btn.dataset.dir;
+      const j = dir==='up' ? i-1 : i+1;
+      if(j<0 || j>=currentTheme.sectionOrder.length) return;
+      [currentTheme.sectionOrder[i], currentTheme.sectionOrder[j]] = [currentTheme.sectionOrder[j], currentTheme.sectionOrder[i]];
+      renderSectionOrderList();
+    });
+  });
+}
+document.getElementById('sectionOrderSaveBtn')?.addEventListener('click', async ()=>{
+  await saveThemeToStorage();
+  applySectionOrder();
+  showToast('Orden guardado');
+});
 
 /* ---------- GESTIÓN DE CATEGORÍAS ---------- */
 function renderCatManageList(){
@@ -3316,9 +3398,13 @@ async function loadTheme(){
     ...loaded,
     social:{...DEFAULT_THEME.social, ...(loaded && loaded.social || {})},
     sizes:{...DEFAULT_THEME.sizes, ...(loaded && loaded.sizes || {})},
-    categories: (loaded && loaded.categories && loaded.categories.length) ? loaded.categories : [...DEFAULT_THEME.categories]
+    categories: (loaded && loaded.categories && loaded.categories.length) ? loaded.categories : [...DEFAULT_THEME.categories],
+    sectionOrder: (loaded && Array.isArray(loaded.sectionOrder) && loaded.sectionOrder.length)
+      ? [...new Set([...loaded.sectionOrder, ...DEFAULT_THEME.sectionOrder])].filter(id=>DEFAULT_THEME.sectionOrder.includes(id))
+      : [...DEFAULT_THEME.sectionOrder]
   } : JSON.parse(JSON.stringify(DEFAULT_THEME));
   applyTheme(currentTheme);
+  applySectionOrder();
   renderCategories();
   if(!loaded){ saveThemeToStorage(); } // primera vez: sube el tema por defecto
 }
