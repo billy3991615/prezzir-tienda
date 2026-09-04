@@ -60,7 +60,7 @@
   html[data-mode="dark"] .app-loading{ background:#0b1130; }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  html{ overflow-x:hidden; }
+  html{ overflow-x:hidden; overscroll-behavior-y:none; }
   body{
     background:var(--asphalt);
     color:var(--text-main);
@@ -68,6 +68,7 @@
     min-height:100vh;
     min-height:100dvh;
     overflow-x:hidden;
+    overscroll-behavior-y:none;
     padding-bottom:70px;
     -webkit-font-smoothing:antialiased;
   }
