@@ -30,16 +30,34 @@
     --surface-blur-2: rgba(247,243,236,0.97);
   }
   html[data-mode="dark"]{
-    --ink:#f2ede6;
-    --asphalt:#16161b;
-    --asphalt-2:#212127;
-    --paper:#1e1e24;
-    --text-main:#f2ede6;
-    --text-muted: rgba(242,237,230,0.6);
-    --line: rgba(242,237,230,0.14);
-    --surface-blur: rgba(22,22,27,0.92);
-    --surface-blur-2: rgba(22,22,27,0.97);
+    --ink:#eef7f4;
+    --asphalt:#0b1130;
+    --asphalt-2:#123a52;
+    --paper: rgba(255,255,255,0.07);
+    --text-main:#f3f7f6;
+    --text-muted: rgba(243,247,246,0.65);
+    --mint:#2be6b0;
+    --line: rgba(255,255,255,0.14);
+    --radius: 20px;
+    --surface-blur: rgba(11,17,48,0.55);
+    --surface-blur-2: rgba(11,17,48,0.8);
   }
+  html[data-mode="dark"] body{
+    background: linear-gradient(160deg, #0b1130 0%, #123a52 45%, #0a2e28 100%);
+    background-attachment: fixed;
+  }
+  html[data-mode="dark"] .card,
+  html[data-mode="dark"] .drawer,
+  html[data-mode="dark"] .admin-modal,
+  html[data-mode="dark"] .form-modal,
+  html[data-mode="dark"] .filter-panel,
+  html[data-mode="dark"] .search-box,
+  html[data-mode="dark"] .auth-box{
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--line);
+  }
+  html[data-mode="dark"] .app-loading{ background:#0b1130; }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   html{ overflow-x:hidden; }
@@ -53,7 +71,7 @@
     -webkit-font-smoothing:antialiased;
   }
   .mono{font-family:'JetBrains Mono',monospace;}
-  .display{font-family:var(--font-display),sans-serif; letter-spacing:0.5px; text-transform:uppercase;}
+  .display{font-family:var(--font-display),sans-serif; font-weight:800; letter-spacing:0.5px; text-transform:uppercase;}
 
   .app-loading{
     position:fixed; inset:0; z-index:9999; background:var(--paper);
@@ -2482,8 +2500,13 @@ function openFavorites(){
 document.getElementById('headerHeartBtn')?.addEventListener('click', openFavorites);
 
 /* ---------- MODO OSCURO ---------- */
+function getEffectiveDisplayFont(){
+  const isDark = document.documentElement.getAttribute('data-mode') === 'dark';
+  return isDark ? "'Poppins'" : `'${currentTheme.fontDisplay}'`;
+}
 function applyDarkMode(isDark){
   document.documentElement.setAttribute('data-mode', isDark ? 'dark' : 'light');
+  document.documentElement.style.setProperty('--font-display', getEffectiveDisplayFont());
   const btn = document.getElementById('darkModeBtn');
   if(btn) btn.textContent = isDark ? '☀️' : '🌙';
   try{ localStorage.setItem('prezzir_dark_mode', isDark ? '1' : '0'); }catch(e){}
@@ -3132,7 +3155,7 @@ function applyTheme(theme){
   document.documentElement.style.setProperty('--pink', theme.pink);
   document.documentElement.style.setProperty('--mint', theme.mint);
   document.documentElement.style.setProperty('--asphalt', theme.asphalt);
-  document.documentElement.style.setProperty('--font-display', `'${theme.fontDisplay}'`);
+  document.documentElement.style.setProperty('--font-display', getEffectiveDisplayFont());
   document.documentElement.style.setProperty('--font-body', `'${theme.fontBody}'`);
   const s = theme.sizes || DEFAULT_THEME.sizes;
   document.documentElement.style.setProperty('--size-hero', s.hero + 'px');
