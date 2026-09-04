@@ -1468,6 +1468,10 @@
         <input type="checkbox" id="fFeatured" style="width:auto;">
         <label style="margin:0; text-transform:none; font-size:13px; color:var(--ink); font-weight:600;">Destacar en el panel de inicio (círculos de arriba)</label>
       </div>
+      <div class="field" style="display:flex; align-items:center; gap:8px; flex-direction:row;">
+        <input type="checkbox" id="fClearance" style="width:auto;">
+        <label style="margin:0; text-transform:none; font-size:13px; color:var(--ink); font-weight:600;">Prioridad de liquidación (aparece más seguido entre los primeros)</label>
+      </div>
       <div class="field">
         <label>Etiqueta en la tarjeta</label>
         <select id="fBadge">
@@ -1641,7 +1645,20 @@ function getFilteredProducts(){
   if(activeFilters.sizes.size > 0){
     list = list.filter(p=> p.sizes.some(s=> activeFilters.sizes.has(s)));
   }
-  return list;
+  return shuffleWithClearancePriority(list);
+}
+
+// Cada producto recibe una posición aleatoria fija por visita (asignada una
+// sola vez, al cargar la tienda), con los de "prioridad de liquidación"
+// recibiendo un empujón para aparecer más seguido entre los primeros.
+// Así el orden se mezcla en cada visita, pero no salta al aplicar filtros.
+function assignShuffleOrder(list){
+  list.forEach(p=>{
+    p._sortKey = Math.random() - (p.clearance ? 0.35 : 0);
+  });
+}
+function shuffleWithClearancePriority(list){
+  return [...list].sort((a,b)=> (a._sortKey ?? 0) - (b._sortKey ?? 0));
 }
 
 function renderFilterSizeChips(){
@@ -2507,10 +2524,10 @@ updateHeartIcon();
 initAuth();
 
 function rowToProduct(row){
-  return { id: row.id, name: row.name, cat: row.cat, price: Number(row.price), sizes: row.sizes, colors: row.colors, img: row.img, desc: row.description || '', featured: !!row.featured, badge: row.badge || '', stock: (row.stock===null || row.stock===undefined) ? null : Number(row.stock), reviews: row.reviews || [], views: Number(row.views)||0, sold: Number(row.sold)||0, flashDiscount: (row.flash_discount===null||row.flash_discount===undefined) ? null : Number(row.flash_discount), flashEndsAt: row.flash_ends_at || null, sizeLabel: row.size_label || 'Talla' };
+  return { id: row.id, name: row.name, cat: row.cat, price: Number(row.price), sizes: row.sizes, colors: row.colors, img: row.img, desc: row.description || '', featured: !!row.featured, badge: row.badge || '', stock: (row.stock===null || row.stock===undefined) ? null : Number(row.stock), reviews: row.reviews || [], views: Number(row.views)||0, sold: Number(row.sold)||0, flashDiscount: (row.flash_discount===null||row.flash_discount===undefined) ? null : Number(row.flash_discount), flashEndsAt: row.flash_ends_at || null, sizeLabel: row.size_label || 'Talla', clearance: !!row.clearance };
 }
 function productToRow(p){
-  return { name: p.name, cat: p.cat, price: p.price, sizes: p.sizes, colors: p.colors, img: p.img, description: p.desc, featured: !!p.featured, badge: p.badge || '', stock: (p.stock===null || p.stock===undefined || p.stock==='') ? null : Number(p.stock), reviews: p.reviews || [], views: Number(p.views)||0, sold: Number(p.sold)||0, flash_discount: (p.flashDiscount===null||p.flashDiscount===undefined||p.flashDiscount==='') ? null : Number(p.flashDiscount), flash_ends_at: p.flashEndsAt || null, size_label: p.sizeLabel || 'Talla' };
+  return { name: p.name, cat: p.cat, price: p.price, sizes: p.sizes, colors: p.colors, img: p.img, description: p.desc, featured: !!p.featured, badge: p.badge || '', stock: (p.stock===null || p.stock===undefined || p.stock==='') ? null : Number(p.stock), reviews: p.reviews || [], views: Number(p.views)||0, sold: Number(p.sold)||0, flash_discount: (p.flashDiscount===null||p.flashDiscount===undefined||p.flashDiscount==='') ? null : Number(p.flashDiscount), flash_ends_at: p.flashEndsAt || null, size_label: p.sizeLabel || 'Talla', clearance: !!p.clearance };
 }
 
 /* ---------- PERSISTENCIA DE PRODUCTOS (Supabase) ---------- */
@@ -2530,6 +2547,7 @@ async function loadProducts(){
   }
 
   nextId = PRODUCTS.reduce((max,p)=>Math.max(max,p.id),0) + 1;
+  assignShuffleOrder(PRODUCTS);
 
   initSelections();
   renderCategories();
@@ -2695,6 +2713,7 @@ function openForm(id){
   document.getElementById('fImgFile').value = '';
   document.getElementById('fDesc').value = p ? (p.desc || '') : '';
   document.getElementById('fFeatured').checked = p ? !!p.featured : false;
+  document.getElementById('fClearance').checked = p ? !!p.clearance : false;
   document.getElementById('fBadge').value = p ? (p.badge || '') : '';
   document.getElementById('fStock').value = (p && p.stock !== null && p.stock !== undefined) ? p.stock : '';
   document.getElementById('fFlashDiscount').value = (p && p.flashDiscount !== null && p.flashDiscount !== undefined) ? p.flashDiscount : '';
@@ -2781,6 +2800,7 @@ document.getElementById('formSaveBtn')?.addEventListener('click', async ()=>{
   const img = document.getElementById('fImg').value.trim() || 'https://picsum.photos/seed/prezzir'+Date.now()+'/400/500';
   const desc = document.getElementById('fDesc').value.trim();
   let featured = document.getElementById('fFeatured').checked;
+  const clearance = document.getElementById('fClearance').checked;
   const badge = document.getElementById('fBadge').value;
   const stockRaw = document.getElementById('fStock').value.trim();
   const stock = stockRaw === '' ? null : Math.max(0, parseInt(stockRaw));
@@ -2816,14 +2836,17 @@ document.getElementById('formSaveBtn')?.addEventListener('click', async ()=>{
 
   if(editingId){
     const p = PRODUCTS.find(x=>x.id===editingId);
-    Object.assign(p, {name, cat, price, sizes, colors, img, desc, featured, badge, stock, flashDiscount, flashEndsAt, sizeLabel});
+    const clearanceChanged = !!p.clearance !== !!clearance;
+    Object.assign(p, {name, cat, price, sizes, colors, img, desc, featured, clearance, badge, stock, flashDiscount, flashEndsAt, sizeLabel});
+    if(clearanceChanged) p._sortKey = Math.random() - (p.clearance ? 0.35 : 0);
     await updateProductInDB(p);
     if(!sizes.includes(selections[p.id]?.size)) selections[p.id].size = sizes[0];
     if(!colors.some(c=>c[0]===selections[p.id]?.color)) selections[p.id].color = colors[0][0];
     showToast('Producto actualizado');
   }else{
-    const saved = await insertProductToDB({name, cat, price, sizes, colors, img, desc, featured, badge, stock, flashDiscount, flashEndsAt, sizeLabel});
+    const saved = await insertProductToDB({name, cat, price, sizes, colors, img, desc, featured, clearance, badge, stock, flashDiscount, flashEndsAt, sizeLabel});
     if(saved){
+      saved._sortKey = Math.random() - (saved.clearance ? 0.35 : 0);
       PRODUCTS.push(saved);
       selections[saved.id] = {size:sizes[0], color:colors[0][0]};
       nextId = Math.max(nextId, saved.id+1);
