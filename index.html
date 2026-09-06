@@ -165,10 +165,25 @@
   /* ---------- EFECTO "VOLAR AL CARRITO" ---------- */
   .fly-to-cart{
     position:fixed; left:0; top:0;
+    width:46px; height:46px;
+    display:flex; align-items:center; justify-content:center;
     font-size:22px; line-height:1;
+    background:var(--paper); border-radius:12px;
+    border:2px solid #fff; box-shadow:0 6px 16px rgba(0,0,0,0.35);
+    overflow:hidden;
     pointer-events:none; z-index:9999;
     will-change:transform, opacity;
     transform-origin:center;
+  }
+  .fly-to-cart img{ width:100%; height:100%; object-fit:cover; }
+  .fly-to-cart.wiggling{ animation: flyWiggle 0.3s ease-in-out 5; }
+  @keyframes flyWiggle{
+    0%,100%{ transform: translateX(0) scale(1); }
+    15%{ transform: translateX(-11px) scale(1.06); }
+    35%{ transform: translateX(11px) scale(1.06); }
+    55%{ transform: translateX(-9px) scale(1.06); }
+    75%{ transform: translateX(9px) scale(1.06); }
+    90%{ transform: translateX(-4px) scale(1.02); }
   }
 
   /* ---------- BOTÓN FLOTANTE DE BÚSQUEDA ---------- */
@@ -1913,7 +1928,7 @@ function renderGrid(){
       btn.classList.add('added');
       btn.textContent = '✓';
       setTimeout(()=>{ btn.classList.remove('added'); btn.innerHTML='<span class="cart-icon-wrap">🛒<span class="plus-badge">+</span></span>'; }, 1100);
-      flyToCart(btn);
+      flyToCart(btn, parseInt(btn.dataset.pid));
     });
   });
 }
@@ -1942,9 +1957,10 @@ function addToCart(pid){
   return true;
 }
 
-// Anima un pequeño ícono volando en arco desde el botón presionado hasta
-// el ícono del carrito en la barra inferior, con un pequeño rebote al llegar.
-function flyToCart(startEl, iconText){
+// Anima un mini sticker con la imagen del producto: primero vibra de lado a
+// lado un momento para llamar la atención, y luego vuela en arco hasta el
+// ícono del carrito en la barra inferior, con un pequeño rebote al llegar.
+function flyToCart(startEl, pid){
   if(!startEl) return;
   const cartTarget = document.querySelector('#bnCart .bn-icon-bg');
   if(!cartTarget) return;
@@ -1958,37 +1974,46 @@ function flyToCart(startEl, iconText){
   const ctrlX = (startX + endX) / 2;
   const ctrlY = Math.min(startY, endY) - 90;
 
+  const product = pid != null ? PRODUCTS.find(p=>p.id===pid) : null;
+
   const fly = document.createElement('div');
-  fly.className = 'fly-to-cart';
-  fly.textContent = iconText || '🛒';
+  fly.className = 'fly-to-cart wiggling';
+  fly.innerHTML = product && product.img ? `<img src="${product.img}" alt="">` : '🛒';
   fly.style.left = startX + 'px';
   fly.style.top = startY + 'px';
   document.body.appendChild(fly);
 
-  const duration = 650;
-  const t0 = performance.now();
+  const wiggleDuration = 1500; // 5 vibraciones de 0.3s
 
-  function frame(now){
-    const t = Math.min((now - t0) / duration, 1);
-    const e = t < 0.5 ? 2*t*t : -1 + (4 - 2*t) * t; // easeInOutQuad
-    const x = (1-e)*(1-e)*startX + 2*(1-e)*e*ctrlX + e*e*endX;
-    const y = (1-e)*(1-e)*startY + 2*(1-e)*e*ctrlY + e*e*endY;
-    const scale = 1 - 0.6*t;
-    const opacity = t < 0.7 ? 1 : 1 - (t-0.7)/0.3;
-    fly.style.transform = `translate(${x-startX}px, ${y-startY}px) scale(${scale})`;
-    fly.style.opacity = opacity;
-    if(t < 1){
-      requestAnimationFrame(frame);
-    }else{
-      fly.remove();
-      const bnCart = document.getElementById('bnCart');
-      if(bnCart){
-        bnCart.classList.remove('bump'); void bnCart.offsetWidth; bnCart.classList.add('bump');
-        setTimeout(()=> bnCart.classList.remove('bump'), 400);
+  setTimeout(()=>{
+    fly.classList.remove('wiggling');
+    fly.style.transform = 'translateX(0) scale(1)';
+
+    const duration = 650;
+    const t0 = performance.now();
+
+    function frame(now){
+      const t = Math.min((now - t0) / duration, 1);
+      const e = t < 0.5 ? 2*t*t : -1 + (4 - 2*t) * t; // easeInOutQuad
+      const x = (1-e)*(1-e)*startX + 2*(1-e)*e*ctrlX + e*e*endX;
+      const y = (1-e)*(1-e)*startY + 2*(1-e)*e*ctrlY + e*e*endY;
+      const scale = 1 - 0.6*t;
+      const opacity = t < 0.7 ? 1 : 1 - (t-0.7)/0.3;
+      fly.style.transform = `translate(${x-startX}px, ${y-startY}px) scale(${scale})`;
+      fly.style.opacity = opacity;
+      if(t < 1){
+        requestAnimationFrame(frame);
+      }else{
+        fly.remove();
+        const bnCart = document.getElementById('bnCart');
+        if(bnCart){
+          bnCart.classList.remove('bump'); void bnCart.offsetWidth; bnCart.classList.add('bump');
+          setTimeout(()=> bnCart.classList.remove('bump'), 400);
+        }
       }
     }
-  }
-  requestAnimationFrame(frame);
+    requestAnimationFrame(frame);
+  }, wiggleDuration);
 }
 
 function updateCartCount(){
@@ -2351,7 +2376,7 @@ document.getElementById('pdAddBtn')?.addEventListener('click', ()=>{
   addBtn.classList.add('added');
   addBtn.textContent = 'Agregado ✓';
   setTimeout(()=>{ addBtn.classList.remove('added'); addBtn.textContent='Agregar al carrito'; }, 1100);
-  flyToCart(addBtn);
+  flyToCart(addBtn, pdCurrentId);
 });
 
 /* ---------- CONEXIÓN A SUPABASE ---------- */
