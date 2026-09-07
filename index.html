@@ -797,6 +797,32 @@
     color:var(--ink); border-bottom-color:var(--pink); font-weight:800;
   }
 
+  /* ---------- MENÚ DE CATEGORÍAS EN ESCRITORIO (hamburguesa) ---------- */
+  .categories-wrap{ position:relative; }
+  .cat-menu-toggle{ display:none; }
+  @media (min-width:641px){
+    .cat-menu-toggle{
+      display:flex; align-items:center; justify-content:center;
+      width:34px; height:34px; margin:10px 0 0 20px;
+      background:none; border:1px solid var(--line); border-radius:8px;
+      cursor:pointer; font-size:16px; color:var(--ink); flex-shrink:0;
+    }
+    .categories-wrap{ display:flex; align-items:flex-start; max-width:1180px; margin:0 auto; }
+    .categories-wrap .categories{ max-width:none; margin:0; flex:1; }
+    .categories-wrap.menu-collapsed .categories{ display:none; }
+    .categories-wrap.menu-collapsed.menu-open .categories{
+      display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+      position:absolute; top:44px; left:20px; z-index:40;
+      background:var(--paper); border:1px solid var(--line); border-radius:12px;
+      box-shadow:0 14px 34px rgba(0,0,0,0.18); padding:10px; min-width:190px;
+      max-height:70vh; overflow-y:auto; overflow-x:visible;
+    }
+    .categories-wrap.menu-collapsed.menu-open .pill{
+      border-bottom:none; padding:8px 6px; width:100%; border-radius:8px;
+    }
+    .categories-wrap.menu-collapsed.menu-open .pill.active{ background:var(--asphalt-2); }
+  }
+
   /* ---------- CÍRCULOS DE CATEGORÍA ---------- */
   .cat-grid-wrap{ max-width:1180px; margin:0 auto; padding:6px 20px 6px; }
   .cat-grid{
@@ -1134,7 +1160,10 @@
   </div>
 </header>
 
-<div class="categories" id="categories"></div>
+<div class="categories-wrap" id="categoriesWrap">
+  <button class="cat-menu-toggle" id="catMenuToggle" title="Categorías">☰</button>
+  <div class="categories" id="categories"></div>
+</div>
 
 <section class="hero">
   <span class="hero-tag mono" id="heroTagText">// TODO EN UN SOLO LUGAR</span>
@@ -2697,6 +2726,22 @@ function applyDarkMode(isDark){
 document.getElementById('darkModeBtn')?.addEventListener('click', ()=>{
   const isDark = document.documentElement.getAttribute('data-mode') === 'dark';
   applyDarkMode(!isDark);
+});
+
+/* ---------- MENÚ DE CATEGORÍAS EN ESCRITORIO ---------- */
+document.getElementById('catMenuToggle')?.addEventListener('click', ()=>{
+  const wrap = document.getElementById('categoriesWrap');
+  if(!wrap.classList.contains('menu-collapsed')){
+    wrap.classList.add('menu-collapsed');
+    wrap.classList.add('menu-open');
+  }else{
+    wrap.classList.toggle('menu-open');
+  }
+});
+document.addEventListener('click', (e)=>{
+  const wrap = document.getElementById('categoriesWrap');
+  if(!wrap || !wrap.classList.contains('menu-open')) return;
+  if(!wrap.contains(e.target)) wrap.classList.remove('menu-open');
 });
 function updateHeartIcon(){
   const has = getLikedIds().size > 0;
