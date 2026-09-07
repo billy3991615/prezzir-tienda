@@ -26,6 +26,7 @@
     --size-cardname: 14.5px;
     --size-cardprice: 15px;
     --size-btn: 32px;
+    --size-carousel: 62%;
     --surface-blur: rgba(247,243,236,0.92);
     --surface-blur-2: rgba(247,243,236,0.97);
   }
@@ -587,14 +588,14 @@
   .promo-carousel-wrap{ max-width:1180px; margin:0 auto; padding:6px 20px 6px; }
   .promo-carousel{
     position:relative; border-radius:16px; aspect-ratio:16/9;
-    background:radial-gradient(ellipse at 50% 30%, #1c2333 0%, #0a0d16 75%);
+    background:radial-gradient(ellipse at 50% 30%, var(--paper) 0%, var(--asphalt) 75%);
     perspective:1100px; overflow:hidden;
   }
   .promo-carousel-track{
     position:absolute; inset:0; transform-style:preserve-3d;
   }
   .promo-carousel-slide{
-    position:absolute; top:50%; left:50%; width:62%; height:78%;
+    position:absolute; top:50%; left:50%; width:var(--size-carousel); height:calc(var(--size-carousel) * 1.258);
     transition: transform .55s cubic-bezier(.22,.9,.32,1), opacity .55s ease;
     will-change:transform, opacity;
   }
@@ -627,9 +628,9 @@
     display:flex; gap:6px;
   }
   .promo-carousel-dot{
-    width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.5); cursor:pointer; border:none; padding:0;
+    width:7px; height:7px; border-radius:50%; background:var(--text-muted); opacity:0.45; cursor:pointer; border:none; padding:0;
   }
-  .promo-carousel-dot.active{ background:#fff; }
+  .promo-carousel-dot.active{ background:var(--ink); opacity:1; }
   .promo-carousel-arrow{
     position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.35); color:#fff;
     border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px;
@@ -1415,6 +1416,11 @@
         <label>Tamaño del botón de carrito (<span id="valBtn"></span>px)</label>
         <input type="range" id="stSizeBtn" min="24" max="44" step="1">
       </div>
+      <div class="field">
+        <label>Tamaño de imagen del carrusel (<span id="valCarousel"></span>%)</label>
+        <input type="range" id="stSizeCarousel" min="40" max="90" step="1">
+        <small>Qué tan grande se ve la foto activa del carrusel de la portada.</small>
+      </div>
 
       <div class="form-actions">
         <button class="form-save" id="sizesSaveBtn">Guardar tamaños</button>
@@ -1709,7 +1715,7 @@ const DEFAULT_THEME = {
   heroTitleColor: "#2b2420",
   heroBtnText: "Ver catálogo ↓",
   social: { whatsapp:"", instagram:"", tiktok:"", facebook:"" },
-  sizes: { hero:92, tagline:17, cardName:14.5, cardPrice:15, btn:32 },
+  sizes: { hero:92, tagline:17, cardName:14.5, cardPrice:15, btn:32, carousel:62 },
   categories: ["Mujer","Hombre","Unisex","Niños","Accesorios"],
   categoryImages: {},
   catDisplayStyle: "circles",
@@ -3325,6 +3331,7 @@ function applyTheme(theme){
   document.documentElement.style.setProperty('--size-cardname', s.cardName + 'px');
   document.documentElement.style.setProperty('--size-cardprice', s.cardPrice + 'px');
   document.documentElement.style.setProperty('--size-btn', s.btn + 'px');
+  document.documentElement.style.setProperty('--size-carousel', (s.carousel != null ? s.carousel : DEFAULT_THEME.sizes.carousel) + '%');
   document.getElementById('logoWord').textContent = theme.name;
   const taglineEl = document.getElementById('heroTagline');
   taglineEl.textContent = theme.tagline;
@@ -3573,6 +3580,7 @@ function fillSizesForm(){
   document.getElementById('stSizeCardName').value = s.cardName;
   document.getElementById('stSizeCardPrice').value = s.cardPrice;
   document.getElementById('stSizeBtn').value = s.btn;
+  document.getElementById('stSizeCarousel').value = s.carousel != null ? s.carousel : DEFAULT_THEME.sizes.carousel;
   updateSizePreview();
 }
 
@@ -3582,12 +3590,14 @@ function updateSizePreview(){
   const cardName = document.getElementById('stSizeCardName').value;
   const cardPrice = document.getElementById('stSizeCardPrice').value;
   const btn = document.getElementById('stSizeBtn').value;
+  const carousel = document.getElementById('stSizeCarousel').value;
 
   document.getElementById('valHero').textContent = hero;
   document.getElementById('valTagline').textContent = tagline;
   document.getElementById('valCardName').textContent = cardName;
   document.getElementById('valCardPrice').textContent = cardPrice;
   document.getElementById('valBtn').textContent = btn;
+  document.getElementById('valCarousel').textContent = carousel;
 
   document.getElementById('spHero').style.fontSize = Math.min(hero, 40) + 'px';
   document.getElementById('spTagline').style.fontSize = tagline + 'px';
@@ -3596,8 +3606,9 @@ function updateSizePreview(){
   const spBtn = document.getElementById('spBtn');
   spBtn.style.width = btn + 'px';
   spBtn.style.height = btn + 'px';
+  document.documentElement.style.setProperty('--size-carousel', carousel + '%');
 }
-['stSizeHero','stSizeTagline','stSizeCardName','stSizeCardPrice','stSizeBtn'].forEach(id=>{
+['stSizeHero','stSizeTagline','stSizeCardName','stSizeCardPrice','stSizeBtn','stSizeCarousel'].forEach(id=>{
   document.getElementById(id).addEventListener('input', updateSizePreview);
 });
 
@@ -3607,7 +3618,8 @@ document.getElementById('sizesSaveBtn')?.addEventListener('click', ()=>{
     tagline: parseFloat(document.getElementById('stSizeTagline').value),
     cardName: parseFloat(document.getElementById('stSizeCardName').value),
     cardPrice: parseFloat(document.getElementById('stSizeCardPrice').value),
-    btn: parseFloat(document.getElementById('stSizeBtn').value)
+    btn: parseFloat(document.getElementById('stSizeBtn').value),
+    carousel: parseFloat(document.getElementById('stSizeCarousel').value)
   };
   applyTheme(currentTheme);
   saveThemeToStorage();
