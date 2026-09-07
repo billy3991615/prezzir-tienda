@@ -790,6 +790,8 @@
     display:inline-flex; align-items:center; gap:6px; flex-shrink:0;
   }
   .pill-icon{ font-size:15px; line-height:1; }
+  .pill-img{ width:20px; height:20px; border-radius:50%; overflow:hidden; flex-shrink:0; display:inline-block; }
+  .pill-img img{ width:100%; height:100%; object-fit:cover; display:block; }
   .pill:hover{ color:var(--ink); }
   .pill.active{
     color:var(--ink); border-bottom-color:var(--pink); font-weight:800;
@@ -1308,6 +1310,14 @@
         <small>Apaga para usar círculos (por defecto). Enciende para usar el carrusel de fotos/video que armes abajo.</small>
       </div>
       <div class="field">
+        <label>Fila de categorías de arriba</label>
+        <div class="toggle-row">
+          <span id="catTabLabel">Iconos</span>
+          <button type="button" class="toggle-switch" id="catTabToggle"><span class="toggle-knob"></span></button>
+        </div>
+        <small>Apaga para usar iconos (por defecto). Enciende para usar las fotos de cada categoría directamente en esa misma fila — esto oculta automáticamente la fila grande de círculos de abajo, para no repetir lo mismo dos veces.</small>
+      </div>
+      <div class="field">
         <label>Carrusel (hasta 4 elementos)</label>
         <div id="carouselSlideList"></div>
         <div style="display:flex; gap:8px; margin-top:6px;">
@@ -1722,6 +1732,7 @@ const DEFAULT_THEME = {
   categories: ["Mujer","Hombre","Unisex","Niños","Accesorios"],
   categoryImages: {},
   catDisplayStyle: "circles",
+  catTabUseImages: false,
   carouselSlides: [],
   coupons: [],
   sectionOrder: ["hero","stories","catgrid","carousel"],
@@ -1853,7 +1864,7 @@ function updateCategoryVisibility(){
   const hasFeatured = PRODUCTS.some(p=>p.featured);
   if(hero) hero.style.display = isHome ? '' : 'none';
   if(stories) stories.style.display = (isHome && hasFeatured) ? '' : 'none';
-  if(catGridWrap) catGridWrap.style.display = (isHome && !useCarousel) ? '' : 'none';
+  if(catGridWrap) catGridWrap.style.display = (isHome && !useCarousel && !currentTheme.catTabUseImages) ? '' : 'none';
   if(promoWrap) promoWrap.style.display = (isHome && useCarousel) ? '' : 'none';
   if(catHeader){
     catHeader.style.display = isHome ? 'none' : 'flex';
@@ -1865,9 +1876,17 @@ document.getElementById('categoryPageBack')?.addEventListener('click', ()=> setA
 function renderCategories(){
   const wrap = document.getElementById('categories');
   const cats = ["Todos", ...currentTheme.categories];
-  wrap.innerHTML = cats.map(c =>
-    `<button class="pill ${c===activeCat?'active':''}" data-cat="${c}"><span class="pill-icon">${getCategoryIcon(c)}</span>${c}</button>`
-  ).join('');
+  const useImages = !!currentTheme.catTabUseImages;
+  wrap.innerHTML = cats.map(c => {
+    let iconHtml = `<span class="pill-icon">${getCategoryIcon(c)}</span>`;
+    if(useImages && c !== 'Todos'){
+      const customImg = currentTheme.categoryImages && currentTheme.categoryImages[c];
+      const sample = PRODUCTS.find(p=>p.cat===c);
+      const imgSrc = customImg || (sample ? sample.img : '');
+      if(imgSrc) iconHtml = `<span class="pill-img"><img src="${imgSrc}" alt=""></span>`;
+    }
+    return `<button class="pill ${c===activeCat?'active':''}" data-cat="${c}">${iconHtml}${c}</button>`;
+  }).join('');
   wrap.querySelectorAll('.pill').forEach(btn=>{
     btn.addEventListener('click', ()=> setActiveCategory(btn.dataset.cat));
   });
@@ -3054,7 +3073,7 @@ document.querySelectorAll('.admin-tab').forEach(tab=>{
     TAB_IDS.forEach(id=>{
       document.getElementById('tab-'+id).style.display = (tab.dataset.tab===id) ? 'block' : 'none';
     });
-    if(tab.dataset.tab==='categorias'){ renderCatManageList(); fillCatStyleToggle(); renderCarouselSlideList(); }
+    if(tab.dataset.tab==='categorias'){ renderCatManageList(); fillCatStyleToggle(); fillCatTabToggle(); renderCarouselSlideList(); }
     if(tab.dataset.tab==='estilo') fillStyleForm();
     if(tab.dataset.tab==='tipografia') fillFontForm();
     if(tab.dataset.tab==='tamanos') fillSizesForm();
@@ -3201,6 +3220,22 @@ document.getElementById('catStyleToggle')?.addEventListener('click', ()=>{
   updateCategoryVisibility();
   saveThemeToStorage();
   showToast(currentTheme.catDisplayStyle === 'carousel' ? 'Usando carrusel' : 'Usando círculos');
+});
+
+function fillCatTabToggle(){
+  const useImages = !!currentTheme.catTabUseImages;
+  const toggle = document.getElementById('catTabToggle');
+  const label = document.getElementById('catTabLabel');
+  if(toggle) toggle.classList.toggle('on', useImages);
+  if(label) label.textContent = useImages ? 'Fotos' : 'Iconos';
+}
+document.getElementById('catTabToggle')?.addEventListener('click', ()=>{
+  currentTheme.catTabUseImages = !currentTheme.catTabUseImages;
+  fillCatTabToggle();
+  renderCategories();
+  updateCategoryVisibility();
+  saveThemeToStorage();
+  showToast(currentTheme.catTabUseImages ? 'Mostrando fotos arriba' : 'Mostrando iconos arriba');
 });
 
 function renderCarouselSlideList(){
