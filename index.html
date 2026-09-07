@@ -588,9 +588,12 @@
   .promo-carousel-wrap{ max-width:1180px; margin:0 auto; padding:6px 20px 6px; }
   .promo-carousel{
     position:relative; border-radius:16px; aspect-ratio:16/9;
-    background:radial-gradient(ellipse at 50% 30%, var(--paper) 0%, var(--asphalt) 75%);
+    background:transparent;
     perspective:1100px; overflow:hidden;
+    touch-action:pan-y;
+    cursor:grab;
   }
+  .promo-carousel.dragging{ cursor:grabbing; }
   .promo-carousel-track{
     position:absolute; inset:0; transform-style:preserve-3d;
   }
@@ -631,13 +634,6 @@
     width:7px; height:7px; border-radius:50%; background:var(--text-muted); opacity:0.45; cursor:pointer; border:none; padding:0;
   }
   .promo-carousel-dot.active{ background:var(--ink); opacity:1; }
-  .promo-carousel-arrow{
-    position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.35); color:#fff;
-    border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px;
-    display:flex; align-items:center; justify-content:center; z-index:5;
-  }
-  .promo-carousel-arrow.prev{ left:10px; }
-  .promo-carousel-arrow.next{ right:10px; }
 
   .icon-btn{
     width:32px; height:32px; border-radius:8px; border:1px solid #ddd; background:white;
@@ -1148,8 +1144,6 @@
 <div class="promo-carousel-wrap" id="promoCarouselWrap" style="display:none;">
   <div class="promo-carousel" id="promoCarousel">
     <div class="promo-carousel-track" id="promoCarouselTrack"></div>
-    <button class="promo-carousel-arrow prev" id="promoCarouselPrev">‹</button>
-    <button class="promo-carousel-arrow next" id="promoCarouselNext">›</button>
     <div class="promo-carousel-dots" id="promoCarouselDots"></div>
   </div>
 </div>
@@ -3510,6 +3504,7 @@ function updatePromoCarouselPosition(){
   if(!track) return;
   const slideEls = track.querySelectorAll('.promo-carousel-slide');
   const n = slideEls.length;
+  const dragPct = (typeof promoDragOffsetPct === 'number') ? promoDragOffsetPct : 0;
   slideEls.forEach((el, i)=>{
     let offset = i - promoCarouselIndex;
     if(offset > n/2) offset -= n;
@@ -3520,6 +3515,8 @@ function updatePromoCarouselPosition(){
     else if(a === 1){ tx=offset*85; tz=-160; ry=offset*-28; scale=0.72; opacity=0.85; z=9; }
     else if(a === 2){ tx=offset*140; tz=-260; ry=offset*-35; scale=0.5; opacity=0.4; z=8; }
     else{ tx=offset*170; tz=-320; ry=offset*-35; scale=0.4; opacity=0; z=0; }
+    tx += dragPct;
+    el.style.transition = promoDragActive ? 'none' : '';
     el.style.zIndex = z;
     el.style.opacity = opacity;
     el.style.pointerEvents = a===0 ? 'auto' : 'none';
@@ -3531,16 +3528,52 @@ function goToPromoSlide(i){
   promoCarouselIndex = i;
   updatePromoCarouselPosition();
 }
-document.getElementById('promoCarouselPrev')?.addEventListener('click', ()=>{
+
+/* ---------- DESLIZAR CON EL DEDO EN EL CARRUSEL ---------- */
+let promoDragActive = false;
+let promoDragStartX = 0;
+let promoDragOffsetPct = 0;
+const promoEl = document.getElementById('promoCarousel');
+
+function promoDragStart(x){
   const slides = currentTheme.carouselSlides || [];
-  if(slides.length===0) return;
-  goToPromoSlide((promoCarouselIndex - 1 + slides.length) % slides.length);
-});
-document.getElementById('promoCarouselNext')?.addEventListener('click', ()=>{
+  if(slides.length < 2) return;
+  promoDragActive = true;
+  promoDragStartX = x;
+  promoDragOffsetPct = 0;
+  clearInterval(promoCarouselTimer);
+  promoEl.classList.add('dragging');
+}
+function promoDragMove(x){
+  if(!promoDragActive) return;
+  const width = promoEl.getBoundingClientRect().width || 1;
+  promoDragOffsetPct = ((x - promoDragStartX) / width) * 100;
+  updatePromoCarouselPosition();
+}
+function promoDragEnd(){
+  if(!promoDragActive) return;
+  promoDragActive = false;
+  promoEl.classList.remove('dragging');
   const slides = currentTheme.carouselSlides || [];
-  if(slides.length===0) return;
-  goToPromoSlide((promoCarouselIndex + 1) % slides.length);
-});
+  const threshold = 15; // % del ancho del carrusel para considerar el deslizamiento
+  if(promoDragOffsetPct <= -threshold){
+    promoCarouselIndex = (promoCarouselIndex + 1) % slides.length;
+  }else if(promoDragOffsetPct >= threshold){
+    promoCarouselIndex = (promoCarouselIndex - 1 + slides.length) % slides.length;
+  }
+  promoDragOffsetPct = 0;
+  updatePromoCarouselPosition();
+  if(slides.length > 1){
+    promoCarouselTimer = setInterval(()=> goToPromoSlide((promoCarouselIndex+1) % slides.length), 4000);
+  }
+}
+if(promoEl){
+  promoEl.addEventListener('pointerdown', (e)=>{ promoDragStart(e.clientX); });
+  promoEl.addEventListener('pointermove', (e)=>{ if(promoDragActive) promoDragMove(e.clientX); });
+  promoEl.addEventListener('pointerup', promoDragEnd);
+  promoEl.addEventListener('pointercancel', promoDragEnd);
+  promoEl.addEventListener('pointerleave', ()=>{ if(promoDragActive) promoDragEnd(); });
+}
 
 function fillStyleForm(){
   document.getElementById('stName').value = currentTheme.name;
