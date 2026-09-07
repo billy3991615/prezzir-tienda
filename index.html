@@ -475,6 +475,12 @@
   @media (max-width:640px){
     .pd-modal{ grid-template-columns:1fr; }
   }
+  @media (min-width:641px){
+    .pd-modal{ height:88vh; max-height:88vh; overflow:hidden; }
+    .pd-img-wrap{ height:100%; overflow:hidden; }
+    .pd-img{ height:100%; object-fit:cover; }
+    .pd-info{ max-height:100%; overflow-y:auto; }
+  }
 
   /* ---------- ADMIN: editar productos ---------- */
   .edit-btn{
