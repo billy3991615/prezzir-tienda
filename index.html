@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=auto">
 <title>PREZZIR — Todo. Ahora.</title>
 <meta name="theme-color" content="#ffe600">
 <meta name="mobile-web-app-capable" content="yes">
@@ -84,7 +84,11 @@
   html[data-mode="dark"] .app-loading{ background:#0b1130; }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  html{ overflow-x:hidden; overscroll-behavior-y:none; background:var(--asphalt); }
+  html{ 
+    overflow-x:hidden; 
+    overscroll-behavior-y: auto;
+    background:var(--asphalt); 
+  }
   body{
     background:var(--asphalt);
     color:var(--text-main);
@@ -93,7 +97,7 @@
     min-height:100dvh;
     min-height:100svh;
     overflow-x:hidden;
-    overscroll-behavior-y:none;
+    overscroll-behavior-y: auto;
     padding-bottom:70px;
     -webkit-font-smoothing:antialiased;
   }
