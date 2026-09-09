@@ -2840,7 +2840,8 @@ async function insertProductToDB(product){
 }
 async function updateProductInDB(product){
   const { error } = await db.from('products').update(productToRow(product)).eq('id', product.id);
-  if(error){ showToast('No se pudo actualizar el producto'); }
+  if(error){ showToast('No se pudo actualizar el producto'); return false; }
+  return true;
 }
 async function deleteProductFromDB(id){
   const { error } = await db.from('products').delete().eq('id', id);
@@ -3112,13 +3113,18 @@ document.getElementById('formSaveBtn')?.addEventListener('click', async ()=>{
 
   if(editingId){
     const p = PRODUCTS.find(x=>x.id===editingId);
+    const backup = JSON.parse(JSON.stringify(p));
     const clearanceChanged = !!p.clearance !== !!clearance;
     Object.assign(p, {name, cat, price, sizes, colors, img, desc, featured, clearance, badge, stock, flashDiscount, flashEndsAt, sizeLabel});
     if(clearanceChanged) p._sortKey = Math.random() - (p.clearance ? 0.35 : 0);
-    await updateProductInDB(p);
-    if(!sizes.includes(selections[p.id]?.size)) selections[p.id].size = sizes[0];
-    if(!colors.some(c=>c[0]===selections[p.id]?.color)) selections[p.id].color = colors[0][0];
-    showToast('Producto actualizado');
+    const ok = await updateProductInDB(p);
+    if(ok){
+      if(!sizes.includes(selections[p.id]?.size)) selections[p.id].size = sizes[0];
+      if(!colors.some(c=>c[0]===selections[p.id]?.color)) selections[p.id].color = colors[0][0];
+      showToast('Producto actualizado');
+    }else{
+      Object.assign(p, backup);
+    }
   }else{
     const saved = await insertProductToDB({name, cat, price, sizes, colors, img, desc, featured, clearance, badge, stock, flashDiscount, flashEndsAt, sizeLabel});
     if(saved){
