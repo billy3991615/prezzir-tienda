@@ -16,19 +16,19 @@
 <style>
   :root{
     --ink:#1c1c1e;
-    --asphalt:#f7f3ec;
-    --asphalt-2:#efe8db;
-    --paper: rgba(255,255,255,0.55);
+    --asphalt:#f2f2f4;
+    --asphalt-2:#e8e8ec;
+    --paper: #ffffff;
     --paper-solid:#ffffff;
-    --text-main:#2b2420;
-    --text-muted: rgba(43,36,32,0.6);
+    --text-main:#16181c;
+    --text-muted: rgba(22,24,28,0.58);
     --yellow:#ffe600;
     --pink:#ff2d78;
     --mint:#00b894;
-    --line: rgba(43,36,32,0.12);
-    --glass-border: rgba(255,255,255,0.5);
-    --glass-shadow: 0 8px 30px rgba(60,40,30,0.10), 0 1px 1px rgba(60,40,30,0.05);
-    --radius: 20px;
+    --line: rgba(22,24,28,0.10);
+    --glass-border: rgba(22,24,28,0.10);
+    --glass-shadow: 0 1px 2px rgba(16,18,22,0.04), 0 4px 14px rgba(16,18,22,0.06);
+    --radius: 12px;
     --font-display: 'Anton';
     --font-body: 'Inter';
     --size-hero: 92px;
@@ -37,21 +37,14 @@
     --size-cardprice: 15px;
     --size-btn: 32px;
     --size-carousel: 62%;
-    --surface-blur: rgba(255,255,255,0.55);
-    --surface-blur-2: rgba(255,255,255,0.7);
+    --surface-blur: rgba(255,255,255,0.97);
+    --surface-blur-2: rgba(255,255,255,0.99);
   }
   body{
-    background:
-      radial-gradient(ellipse 90% 60% at 12% 0%, rgba(255,230,0,0.16) 0%, transparent 55%),
-      radial-gradient(ellipse 80% 60% at 100% 20%, rgba(255,45,120,0.12) 0%, transparent 55%),
-      radial-gradient(ellipse 80% 70% at 20% 100%, rgba(0,184,148,0.14) 0%, transparent 55%),
-      var(--asphalt);
-    background-attachment:fixed;
+    background: var(--asphalt);
   }
   .card, .header, .bottom-nav, .drawer, .admin-modal, .form-modal,
   .filter-panel, .search-box, .auth-box, .pd-modal, .cart-popup{
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
   }
@@ -967,6 +960,9 @@
   }
   .card-body{ padding:12px 14px 14px; display:flex; flex-direction:column; gap:6px; flex:1; }
   .card-name{ font-weight:700; font-size:var(--size-cardname); line-height:1.25; }
+  .card-rating{ display:flex; align-items:center; gap:4px; margin-top:2px; }
+  .card-rating .stars{ color:#f5a623; font-size:11px; letter-spacing:0.5px; }
+  .card-rating-count{ font-size:11px; color:var(--text-muted); font-weight:600; }
   .card-bottom-row{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; gap:8px; }
   .card-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:var(--size-cardprice); }
   .add-btn{
@@ -2009,6 +2005,12 @@ function updateFlashCountdowns(){
 }
 setInterval(updateFlashCountdowns, 30000);
 
+function cardRatingHtml(p){
+  const reviews = p.reviews || [];
+  if(reviews.length === 0) return '';
+  const avg = reviews.reduce((s,r)=>s+r.rating,0) / reviews.length;
+  return `<div class="card-rating"><span class="stars">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))}</span><span class="card-rating-count">(${reviews.length})</span></div>`;
+}
 function renderGrid(){
   const grid = document.getElementById('productGrid');
   const list = getFilteredProducts();
@@ -2032,6 +2034,7 @@ function renderGrid(){
       </div>
       <div class="card-body">
         <span class="card-name">${p.name}</span>
+        ${cardRatingHtml(p)}
         ${stockNote}${flashNote}
         <div class="card-bottom-row">
           ${flashPriceHtml(p)}
