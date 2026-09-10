@@ -2185,6 +2185,7 @@
       <input type="email" id="loginEmail" placeholder="Correo electrónico" class="simple-auth-input">
       <input type="password" id="loginPassword" placeholder="Contraseña" class="simple-auth-input">
       <div id="loginError" class="simple-auth-error"></div>
+      <div id="loginLoading" class="simple-auth-loading" style="display:none; color:#00E0A8; font-size:13px; font-weight:600; margin-bottom:12px;">Iniciando sesión...</div>
       <button onclick="handleLogin()" class="simple-auth-submit">Ingresar</button>
     </div>
 
@@ -2196,6 +2197,7 @@
       <input type="password" id="registerPassword" placeholder="Contraseña" class="simple-auth-input">
       <input type="password" id="registerPasswordConfirm" placeholder="Confirmar contraseña" class="simple-auth-input">
       <div id="registerError" class="simple-auth-error"></div>
+      <div id="registerLoading" class="simple-auth-loading" style="display:none; color:#00E0A8; font-size:13px; font-weight:600; margin-bottom:12px;">Creando cuenta...</div>
       <button onclick="handleRegister()" class="simple-auth-submit">Crear cuenta</button>
     </div>
 
@@ -3652,7 +3654,7 @@ function openAuthModal(){
 function closeAuthModal(){
   const modal = document.getElementById('simpleAuthModal');
   modal.style.display = 'none';
-  // Limpiar campos y errores
+  // Limpiar campos, errores y loading
   document.getElementById('loginEmail').value = '';
   document.getElementById('loginPassword').value = '';
   document.getElementById('registerName').value = '';
@@ -3661,6 +3663,8 @@ function closeAuthModal(){
   document.getElementById('registerPasswordConfirm').value = '';
   document.getElementById('loginError').textContent = '';
   document.getElementById('registerError').textContent = '';
+  document.getElementById('loginLoading').style.display = 'none';
+  document.getElementById('registerLoading').style.display = 'none';
 }
 
 function switchTab(tab){
@@ -3681,10 +3685,11 @@ function switchTab(tab){
   document.getElementById('registerError').textContent = '';
 }
 
-function handleLogin(){
+async function handleLogin(){
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
   const errorDiv = document.getElementById('loginError');
+  const loadingDiv = document.getElementById('loginLoading');
   
   // Validar que no estén vacíos
   if(!email || !password){
@@ -3698,18 +3703,44 @@ function handleLogin(){
     return;
   }
   
-  // Si pasa la validación, navegar al catálogo
-  closeAuthModal();
-  navigateToCatalog();
-  showToast('¡Bienvenido! 🎉');
+  // Limpiar error y mostrar loading
+  errorDiv.textContent = '';
+  loadingDiv.style.display = 'block';
+  
+  try {
+    // Conectar con Supabase
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+    
+    loadingDiv.style.display = 'none';
+    
+    if(error){
+      errorDiv.textContent = error.message || 'Error al iniciar sesión';
+      return;
+    }
+    
+    if(data.user){
+      // Login exitoso
+      closeAuthModal();
+      navigateToCatalog();
+      showToast('¡Bienvenido ' + (data.user.email) + '! 🎉');
+    }
+  } catch(err) {
+    loadingDiv.style.display = 'none';
+    errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+    console.error(err);
+  }
 }
 
-function handleRegister(){
+async function handleRegister(){
   const name = document.getElementById('registerName').value.trim();
   const email = document.getElementById('registerEmail').value.trim();
   const password = document.getElementById('registerPassword').value.trim();
   const passwordConfirm = document.getElementById('registerPasswordConfirm').value.trim();
   const errorDiv = document.getElementById('registerError');
+  const loadingDiv = document.getElementById('registerLoading');
   
   // Validar que no estén vacíos
   if(!name || !email || !password || !passwordConfirm){
@@ -3735,10 +3766,40 @@ function handleRegister(){
     return;
   }
   
-  // Si pasa la validación, navegar al catálogo
-  closeAuthModal();
-  navigateToCatalog();
-  showToast('¡Cuenta creada! Bienvenido ' + name + ' 🎉');
+  // Limpiar error y mostrar loading
+  errorDiv.textContent = '';
+  loadingDiv.style.display = 'block';
+  
+  try {
+    // Conectar con Supabase
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          full_name: name
+        }
+      }
+    });
+    
+    loadingDiv.style.display = 'none';
+    
+    if(error){
+      errorDiv.textContent = error.message || 'Error al crear cuenta';
+      return;
+    }
+    
+    if(data.user){
+      // Registro exitoso
+      closeAuthModal();
+      navigateToCatalog();
+      showToast('¡Cuenta creada! Bienvenido ' + name + ' 🎉');
+    }
+  } catch(err) {
+    loadingDiv.style.display = 'none';
+    errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+    console.error(err);
+  }
 }
 
 
