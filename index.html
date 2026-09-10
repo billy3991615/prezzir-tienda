@@ -206,7 +206,7 @@
   .header-heart{ display:none; }
   .logo{ display:none; }
   .logo-mark{ display:none; }
-  .logo-word{ display:none; }
+  .logo-word{ display:inline-block; }
   .cart-btn{
     position:relative;
     background:var(--paper); color:var(--ink); border:none;
@@ -1223,10 +1223,417 @@
   @media (prefers-reduced-motion: reduce){
     *:not(.card-badge){ transition:none !important; animation:none !important; }
   }
+
+  /* ===== PAGE SECTIONS ===== */
+  .page-section{
+    width: 100%;
+    transition: all 0.5s ease;
+  }
+
+  #welcomePage{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1000;
+    background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+    background-image: var(--welcome-bg-image, linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%));
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  #welcomePage.active{
+    display: flex;
+  }
+
+  #catalogPage{
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== WELCOME PAGE STYLES ===== */
+  .welcome-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .welcome-content{
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    text-align: center;
+    max-width: 100%;
+    margin-top: 60px;
+  }
+
+  .welcome-logo{
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .logo-letter{
+    background: #FFEB3B;
+    color: #333;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 900;
+  }
+
+  .logo-word{
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #FF2D78 0%, #00E0A8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .welcome-text{
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: #333;
+    letter-spacing: -0.5px;
+  }
+
+  .welcome-text .highlight{
+    background: linear-gradient(135deg, #00E0A8 0%, #00C896 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .welcome-subtitle{
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 40px;
+    max-width: 300px;
+  }
+
+  .buttons-container{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 40px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .auth-button{
+    background: linear-gradient(135deg, #FF2D78 0%, #E91E63 100%);
+    color: white;
+    border: none;
+    border-radius: 28px;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 45, 120, 0.3);
+  }
+
+  .auth-button:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 45, 120, 0.4);
+  }
+
+  .auth-button:active{
+    transform: scale(0.98);
+  }
+
+  .catalog-button{
+    background: white;
+    color: #00E0A8;
+    border: 2px solid #00E0A8;
+    border-radius: 28px;
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .catalog-button:hover{
+    background: #00E0A8;
+    color: white;
+  }
+
+  .catalog-button:active{
+    transform: scale(0.98);
+  }
+
+  .social-menu-container{
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    z-index: 1050;
+  }
+
+  .social-menu-btn{
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #00E0A8;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .social-menu-btn:hover{
+    background: #00E0A8;
+    box-shadow: 0 6px 20px rgba(0, 224, 168, 0.3);
+  }
+
+  .social-menu-btn span{
+    width: 24px;
+    height: 2px;
+    background: #FF2D78;
+    border-radius: 1px;
+    transition: all 0.3s ease;
+  }
+
+  .social-dropdown{
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 1049;
+  }
+
+  .social-dropdown.open{
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .social-dropdown a{
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f5f5f5;
+    color: #00E0A8;
+    font-size: 22px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid #00E0A8;
+  }
+
+  .social-dropdown a:hover{
+    background: #00E0A8;
+    color: white;
+    transform: scale(1.1);
+  }
+
+  /* ===== BUBBLES ANIMATION ===== */
+  .bubbles-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .bubble{
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: float 8s infinite ease-in-out;
+  }
+
+  .bubble-pink{
+    background: radial-gradient(circle at 30% 30%, rgba(255, 45, 120, 0.8), rgba(255, 45, 120, 0.3));
+    box-shadow: 0 0 20px rgba(255, 45, 120, 0.4);
+  }
+
+  .bubble-mint{
+    background: radial-gradient(circle at 30% 30%, rgba(0, 224, 168, 0.8), rgba(0, 224, 168, 0.3));
+    box-shadow: 0 0 20px rgba(0, 224, 168, 0.4);
+  }
+
+  .bubble:nth-child(1){
+    width: 60px;
+    height: 60px;
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+    animation-duration: 7s;
+  }
+
+  .bubble:nth-child(2){
+    width: 40px;
+    height: 40px;
+    top: 20%;
+    right: 15%;
+    animation-delay: 1s;
+    animation-duration: 8s;
+  }
+
+  .bubble:nth-child(3){
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    left: 5%;
+    animation-delay: 2s;
+    animation-duration: 9s;
+  }
+
+  .bubble:nth-child(4){
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    right: 10%;
+    animation-delay: 3s;
+    animation-duration: 7.5s;
+  }
+
+  .bubble:nth-child(5){
+    width: 70px;
+    height: 70px;
+    bottom: 30%;
+    right: 20%;
+    animation-delay: 4s;
+    animation-duration: 8.5s;
+  }
+
+  @keyframes float{
+    0%, 100%{
+      transform: translateX(0px) translateY(0px);
+    }
+    25%{
+      transform: translateX(80px) translateY(-50px);
+    }
+    50%{
+      transform: translateX(-100px) translateY(-100px);
+    }
+    75%{
+      transform: translateX(60px) translateY(50px);
+    }
+  }
+
+  @media (max-width: 480px){
+    .welcome-logo{
+      margin-bottom: 30px;
+    }
+    .logo-letter{
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
+    }
+    .logo-word{
+      font-size: 28px;
+    }
+    .welcome-text{
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .welcome-subtitle{
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    .buttons-container{
+      margin-bottom: 30px;
+    }
+    .social-menu-btn{
+      width: 50px;
+      height: 50px;
+    }
+  }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
+
+<!-- ===== WELCOME PAGE ===== -->
+<div id="welcomePage" class="page-section active">
+  <div class="welcome-container">
+    <div class="welcome-content">
+      <div class="welcome-logo">
+        <div class="logo-letter">P</div>
+        <div class="logo-word">REZZIR</div>
+      </div>
+      
+      <h1 class="welcome-text">Bienvenido a<br><span class="highlight">Prezzir</span></h1>
+      
+      <p class="welcome-subtitle">Descubre moda, accesorios y mucho más al mejor precio</p>
+      
+      <div class="buttons-container">
+        <button class="auth-button" id="welcomeAuthBtn">Iniciar/Crear cuenta</button>
+      </div>
+      
+      <!-- Burbujas animadas -->
+      <div class="bubbles-container">
+        <div class="bubble bubble-pink"></div>
+        <div class="bubble bubble-mint"></div>
+        <div class="bubble bubble-pink"></div>
+        <div class="bubble bubble-mint"></div>
+        <div class="bubble bubble-pink"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="social-menu-container">
+    <button class="social-menu-btn" id="welcomeSocialBtn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="social-dropdown" id="welcomeSocialDropdown">
+      <a href="https://wa.me/tu-numero" target="_blank" title="WhatsApp">📱</a>
+      <a href="https://instagram.com/tu-cuenta" target="_blank" title="Instagram">📸</a>
+      <a href="https://tiktok.com/@tu-cuenta" target="_blank" title="TikTok">🎵</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CATALOG PAGE ===== -->
+<div id="catalogPage" class="page-section" style="display:none;">
 
 <div class="app-loading" id="appLoading">
   <span class="app-loading-mark">P</span>
@@ -1394,6 +1801,7 @@
       <button class="admin-tab" data-tab="tamanos">Tamaños</button>
       <button class="admin-tab" data-tab="banner">Banner Principal</button>
       <button class="admin-tab" data-tab="carrusel">Carrusel de Fotos</button>
+      <button class="admin-tab" data-tab="bienvenida">Imagen Bienvenida</button>
       <button class="admin-tab" data-tab="redes">Redes</button>
       <button class="admin-tab" data-tab="cupones">Cupones</button>
       <button class="admin-tab" data-tab="estadisticas">Estadísticas</button>
@@ -1598,6 +2006,22 @@
       <div class="form-actions">
         <button class="form-save" id="carruselSaveBtn">Guardar carrusel</button>
         <button class="form-cancel" id="carruselResetBtn">Restablecer</button>
+      </div>
+    </div>
+
+    <div class="admin-body" id="tab-bienvenida" style="display:none;">
+      <div class="field">
+        <label>Imagen de fondo de página de bienvenida</label>
+        <small>Sube una imagen para personalizar el fondo de la página de bienvenida</small>
+        <div id="welcomeBgPreview" style="width:100%; height:200px; background-size:cover; background-position:center; border-radius:8px; margin-top:8px; border:2px dashed #ddd;"></div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <input type="file" accept="image/*" id="welcomeBgInput" style="display:none;">
+          <button class="form-save" id="welcomeBgUploadBtn" style="flex:1;">📸 Seleccionar imagen</button>
+          <button class="form-cancel" id="welcomeBgDeleteBtn" style="flex:0.5;">🗑️</button>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="form-save" id="welcomeSaveBtn">Guardar imagen</button>
       </div>
     </div>
 
@@ -1875,6 +2299,7 @@ const DEFAULT_THEME = {
   catTabUseImages: false,
   carouselSlides: [],
   bannerImages: [],
+  welcomeBgImage: null,
   coupons: [],
   sectionOrder: ["hero","stories","catgrid","carousel"],
   flyToCartEnabled: true
@@ -3651,6 +4076,12 @@ function applyTheme(theme){
   renderSocialIcons(theme.social);
   renderPromoCarousel();
   updateCategoryVisibility();
+  
+  // Aplicar imagen de fondo de bienvenida
+  if(theme.welcomeBgImage){
+    document.documentElement.style.setProperty('--welcome-bg-image', `url('${theme.welcomeBgImage}')`);
+    document.getElementById('welcomeBgPreview').style.backgroundImage = `url('${theme.welcomeBgImage}')`;
+  }
 }
 
 function renderSocialIcons(social){
@@ -4125,6 +4556,45 @@ document.getElementById('carruselResetBtn')?.addEventListener('click', ()=>{
   showToast('Carrusel restablecido');
 });
 
+/* ===== WELCOME PAGE BACKGROUND IMAGE ===== */
+const welcomeBgInput = document.getElementById('welcomeBgInput');
+const welcomeBgUploadBtn = document.getElementById('welcomeBgUploadBtn');
+const welcomeBgDeleteBtn = document.getElementById('welcomeBgDeleteBtn');
+const welcomeSaveBtn = document.getElementById('welcomeSaveBtn');
+const welcomeBgPreview = document.getElementById('welcomeBgPreview');
+
+welcomeBgUploadBtn?.addEventListener('click', ()=> welcomeBgInput?.click());
+
+welcomeBgInput?.addEventListener('change', (e)=>{
+  const file = e.target.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt)=>{
+    const base64 = evt.target?.result;
+    if(typeof base64 === 'string'){
+      currentTheme.welcomeBgImage = base64;
+      welcomeBgPreview.style.backgroundImage = `url('${base64}')`;
+      showToast('Imagen seleccionada');
+    }
+  };
+  reader.readAsDataURL(file);
+});
+
+welcomeBgDeleteBtn?.addEventListener('click', ()=>{
+  currentTheme.welcomeBgImage = null;
+  welcomeBgPreview.style.backgroundImage = 'none';
+  welcomeBgInput.value = '';
+  showToast('Imagen eliminada');
+});
+
+welcomeSaveBtn?.addEventListener('click', ()=>{
+  if(currentTheme.welcomeBgImage){
+    document.documentElement.style.setProperty('--welcome-bg-image', `url('${currentTheme.welcomeBgImage}')`);
+  }
+  saveThemeToStorage();
+  showToast('Imagen de bienvenida guardada');
+});
+
 const themeReadyPromise = loadTheme();
 
 function hideAppLoading(){
@@ -4135,7 +4605,40 @@ function hideAppLoading(){
 }
 Promise.all([productsReadyPromise, themeReadyPromise]).catch(()=>{}).finally(hideAppLoading);
 setTimeout(hideAppLoading, 2000);
+
+/* ===== NAVIGATION BETWEEN PAGES ===== */
+function navigateToCatalog(){
+  document.getElementById('welcomePage').classList.remove('active');
+  document.getElementById('welcomePage').style.display = 'none';
+  document.getElementById('catalogPage').style.display = 'block';
+}
+
+function navigateToWelcome(){
+  document.getElementById('catalogPage').style.display = 'none';
+  document.getElementById('welcomePage').classList.add('active');
+  document.getElementById('welcomePage').style.display = 'flex';
+}
+
+// Event Listeners
+document.getElementById('welcomeAuthBtn')?.addEventListener('click', ()=>{
+  // Navega al catálogo y abre modal de autenticación
+  navigateToCatalog();
+  setTimeout(()=> openPinModal(), 300);
+});
+
+// Social Menu Toggle (Welcome Page)
+const welcomeSocialBtn = document.getElementById('welcomeSocialBtn');
+const welcomeSocialDropdown = document.getElementById('welcomeSocialDropdown');
+welcomeSocialBtn?.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  welcomeSocialDropdown.classList.toggle('open');
+});
+document.addEventListener('click', ()=>{
+  welcomeSocialDropdown?.classList.remove('open');
+});
 </script>
+
+</div> <!-- Cierre de catalogPage -->
 
 </body>
 </html>
