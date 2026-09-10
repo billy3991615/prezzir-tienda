@@ -3647,13 +3647,22 @@ function closePinModal(){ pinOverlay.classList.remove('open'); }
 
 /* ===== AUTH MODAL FUNCTIONS ===== */
 function openAuthModal(){
+  console.log('openAuthModal called');
   const modal = document.getElementById('simpleAuthModal');
-  modal.style.display = 'flex';
+  if(modal){
+    modal.style.display = 'flex';
+    modal.classList.remove('closed');
+    console.log('Modal mostrado - display flex');
+  } else {
+    console.log('ERROR: Modal no encontrado');
+    alert('Modal no encontrado en el DOM');
+  }
 }
 
 function closeAuthModal(){
   const modal = document.getElementById('simpleAuthModal');
   modal.style.display = 'none';
+  modal.classList.add('closed');
   // Limpiar campos, errores y loading
   document.getElementById('loginEmail').value = '';
   document.getElementById('loginPassword').value = '';
