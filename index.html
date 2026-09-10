@@ -123,14 +123,16 @@
   /* ---------- HEADER ---------- */
   header.header-top{
     position:sticky; top:0; z-index:40;
-    background:linear-gradient(135deg, var(--yellow) 0%, var(--pink) 50%, var(--mint) 100%);
+    background: var(--paper);
+    border-bottom: 3px solid var(--pink);
+    box-shadow: 0 2px 12px rgba(255, 45, 120, 0.08);
     padding:12px 0 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     width:100vw;
     left:50%;
     right:50%;
     margin-left:-50vw;
     margin-right:-50vw;
+  }
   }
   .header-bar{
     display:flex; align-items:center; gap:10px; justify-content:space-between;
@@ -138,11 +140,11 @@
   }
   .h-icon{
     width:40px; height:40px; border-radius:50%;
-    background:rgba(255,255,255,0.25); border:1.5px solid rgba(255,255,255,0.5);
-    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    background: transparent; border: 2px solid var(--pink);
+    color: var(--pink); cursor:pointer; display:flex; align-items:center; justify-content:center;
     transition: all .2s ease; flex-shrink:0; padding:0;
   }
-  .h-icon svg{ width:20px; height:20px; stroke:currentColor; }
+  .h-icon:hover{ background: var(--pink); color: white; }
   .h-icon:active{ transform:scale(0.92); }
   .header-search{
     flex:1; display:flex; align-items:center; gap:10px;
@@ -153,8 +155,8 @@
   .header-search .hs-icon{ width:18px; height:18px; opacity:0.5; flex-shrink:0; stroke:currentColor; }
   .header-search .hs-placeholder{ font-size:14px; color:var(--text-muted); }
   .banner-carousel{
-    margin:0; overflow:hidden; position:relative; height:180px;
-    background:rgba(0,0,0,0.05);
+    margin:0; overflow:hidden; position:relative; height:200px;
+    background: linear-gradient(135deg, rgba(255, 45, 120, 0.08) 0%, rgba(0, 224, 168, 0.08) 100%);
     width:100vw;
     left:50%;
     right:50%;
@@ -176,10 +178,10 @@
   }
   .banner-dot{
     width:8px; height:8px; border-radius:50%;
-    background:rgba(255,255,255,0.4); cursor:pointer;
+    background: var(--mint); opacity:0.3; cursor:pointer;
     transition: all .3s ease; border:none; padding:0;
   }
-  .banner-dot.active{ background:rgba(255,255,255,0.95); width:24px; border-radius:4px; }
+  .banner-dot.active{ background: var(--pink); opacity: 1; width:24px; border-radius:4px; }
   .header-logo-bar{
     display:flex; align-items:center; justify-content:space-between;
     padding:8px 14px 0; margin:0;
