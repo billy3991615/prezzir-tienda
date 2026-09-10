@@ -795,11 +795,15 @@
 
   /* ---------- AUTH MODAL (LOGIN/REGISTER) ---------- */
   .auth-overlay{
-    position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:95;
-    opacity:0; pointer-events:none; transition:opacity .2s ease;
+    position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1005;
     display:flex; align-items:center; justify-content:center; padding:20px;
   }
-  .auth-overlay.open{ opacity:1; pointer-events:auto; }
+  .auth-overlay.closed{
+    display:none;
+  }
+  .auth-overlay.open{
+    display:flex;
+  }
   .auth-modal{
     background:var(--paper); color:var(--ink); border-radius:16px; padding:26px 24px;
     width:min(340px,90vw); text-align:center;
@@ -2244,7 +2248,7 @@
 </div>
 
 <!-- ===== AUTH MODAL (LOGIN/REGISTER) ===== -->
-<div class="auth-overlay" id="authOverlay">
+<div class="auth-overlay closed" id="authOverlay">
   <div class="auth-modal" id="authModal">
     <button class="modal-close" id="authCloseBtn">✕</button>
     
@@ -2302,29 +2306,6 @@
   </div>
 </div>
 
-<div class="auth-overlay" id="authOverlay">
-  <div class="auth-box" style="position:relative;">
-    <button class="search-close" id="authClose" style="position:absolute; top:14px; right:14px;">✕</button>
-    <div id="authLoggedOut">
-      <div class="auth-tabs">
-        <button class="auth-tab active" data-authtab="login">Iniciar sesión</button>
-        <button class="auth-tab" data-authtab="signup">Registrarme</button>
-      </div>
-      <div class="auth-field"><input type="email" id="authEmail" placeholder="Correo electrónico"></div>
-      <div class="auth-field"><input type="password" id="authPassword" placeholder="Contraseña"></div>
-      <div class="auth-field" style="display:flex; align-items:center; gap:8px;">
-        <input type="checkbox" id="authRemember" style="width:auto;">
-        <label style="margin:0; text-transform:none; font-size:13px; color:#666; font-weight:500;">Recordar mi sesión en este dispositivo</label>
-      </div>
-      <button class="auth-submit" id="authSubmitBtn">Iniciar sesión</button>
-      <span class="auth-error" id="authError"></span>
-    </div>
-    <div id="authLoggedIn" class="auth-logged" style="display:none;">
-      <p>Conectado como <b id="authUserEmail"></b></p>
-      <button class="auth-logout" id="authLogoutBtn">Cerrar sesión</button>
-    </div>
-  </div>
-</div>
 
 <div class="toast" id="toast"><span class="dot"></span><span id="toastMsg"></span></div>
 
@@ -3603,17 +3584,21 @@ function closePinModal(){ pinOverlay.classList.remove('open'); }
 
 /* ===== AUTH MODAL FUNCTIONS ===== */
 function openAuthModal(){
-  document.getElementById('authOverlay').classList.add('open');
-  document.getElementById('loginEmail').focus();
+  const overlay = document.getElementById('authOverlay');
+  overlay?.classList.remove('closed');
+  overlay?.classList.add('open');
+  document.getElementById('loginEmail')?.focus();
 }
 
 function closeAuthModal(){
-  document.getElementById('authOverlay').classList.remove('open');
+  const overlay = document.getElementById('authOverlay');
+  overlay?.classList.remove('open');
+  overlay?.classList.add('closed');
   // Limpiar formularios
-  document.getElementById('loginForm').reset();
-  document.getElementById('registerForm').reset();
-  document.getElementById('loginError').classList.remove('show');
-  document.getElementById('registerError').classList.remove('show');
+  document.getElementById('loginForm')?.reset();
+  document.getElementById('registerForm')?.reset();
+  document.getElementById('loginError')?.classList.remove('show');
+  document.getElementById('registerError')?.classList.remove('show');
 }
 
 // Tab switching
@@ -4838,7 +4823,7 @@ function navigateToWelcome(){
 }
 
 // Event Listeners
-document.getElementById('welcomeAuthBtn')?.addEventListener('click', ()=>{
+document.getElementById('welcomeAuthBtn')?.addEventListener('click', (e)=>{
   openAuthModal();
 });
 
