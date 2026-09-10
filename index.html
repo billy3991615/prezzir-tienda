@@ -148,8 +148,8 @@
   .header-search .hs-icon{ width:18px; height:18px; opacity:0.5; flex-shrink:0; stroke:currentColor; }
   .header-search .hs-placeholder{ font-size:14px; color:var(--text-muted); }
   .banner-carousel{
-    margin:0; overflow:hidden; position:relative; height:180px;
-    background:rgba(0,0,0,0.05);
+    margin:0 -14px 0 -14px; overflow:hidden; position:relative; height:180px;
+    background:rgba(0,0,0,0.05); width:calc(100% + 28px);
   }
   .banner-track{
     display:flex; height:100%; -webkit-overflow-scrolling:touch;
@@ -1245,13 +1245,6 @@
   <div class="categories" id="categories"></div>
 </div>
 
-<section class="hero">
-  <span class="hero-tag mono" id="heroTagText">// TODO EN UN SOLO LUGAR</span>
-  <h1 id="heroTitleEl"></h1>
-  <p id="heroTagline">Streetwear, básicos y accesorios en un catálogo que se actualiza rápido. Elige talla, color, y arma tu carrito — sin vueltas.</p>
-  <button class="hero-cta" id="heroCtaBtn" onclick="document.getElementById('grid-wrap').scrollIntoView({behavior:'smooth'})">Ver catálogo ↓</button>
-</section>
-
 <div class="stories-wrap" id="stories-wrap-section">
   <span class="stories-label">Destacados · desliza →</span>
   <div class="stories" id="stories"></div>
@@ -1955,7 +1948,7 @@ const CATEGORY_ICONS = {
   "Mujer": "👗",
   "Hombre": "👔",
   "Unisex": "🧢",
-  "Niños": "🍼",
+  "Niños": "👶",
   "Accesorios": "💍"
 };
 function getCategoryIcon(cat){ return CATEGORY_ICONS[cat] || "🏷️"; }
@@ -2020,7 +2013,7 @@ function renderCategories(){
       const imgSrc = customImg || (sample ? sample.img : '');
       if(imgSrc) iconHtml = `<span class="pill-img"><img src="${imgSrc}" alt=""></span>`;
     }
-    return `<button class="pill ${c===activeCat?'active':''}" data-cat="${c}">${iconHtml}${c}</button>`;
+    return `<button class="pill ${c===activeCat?'active':''}" data-cat="${c}">${iconHtml}</button>`;
   }).join('');
   wrap.querySelectorAll('.pill').forEach(btn=>{
     btn.addEventListener('click', ()=> setActiveCategory(btn.dataset.cat));
@@ -2038,7 +2031,6 @@ function renderCatIconGrid(){
     const inner = imgSrc ? `<img src="${imgSrc}" alt="${c}">` : getCategoryIcon(c);
     return `<button class="cat-circle-btn" data-cat="${c}">
       <span class="cat-circle-img">${inner}</span>
-      <span class="cat-circle-label">${c}</span>
     </button>`;
   }).join('');
   wrap.querySelectorAll('.cat-circle-btn').forEach(btn=>{
