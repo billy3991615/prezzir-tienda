@@ -121,63 +121,96 @@
   a, button{font-family:inherit;}
 
   /* ---------- HEADER ---------- */
-  header{
-    position:static; z-index:40;
-    background:var(--surface-blur);
-    backdrop-filter: blur(10px);
-    border-bottom:1px solid var(--line);
+  header.header-shein{
+    position:sticky; top:0; z-index:40;
+    background:linear-gradient(135deg, var(--yellow) 0%, var(--pink) 50%, var(--mint) 100%);
+    padding:12px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
-  .header-inner{
-    max-width:1180px; margin:0 auto; padding:14px 20px 10px;
-    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  .header-icons{
+    display:flex; align-items:center; gap:12px; justify-content:space-between;
   }
-  .header-searchrow{
-    max-width:1180px; margin:0 auto; padding:0 20px 12px;
-    display:flex; align-items:center; gap:10px;
+  .h-icon-btn{
+    width:40px; height:40px; border-radius:50%;
+    background:rgba(255,255,255,0.25); border:1.5px solid rgba(255,255,255,0.5);
+    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition: all .2s ease;
+    flex-shrink:0;
+  }
+  .h-icon-btn svg{ width:20px; height:20px; stroke:currentColor; }
+  .h-icon-btn:active{ transform:scale(0.92); }
+
+  .header-search-wrapper{
+    flex:1; min-width:200px; margin:0 8px;
   }
   .header-search{
-    flex:1; display:flex; align-items:center; gap:8px;
-    background:var(--paper); border:1px solid var(--line); border-radius:999px;
-    padding:10px 16px; cursor:pointer;
-  }
-  .header-search span.hs-icon{ font-size:15px; opacity:0.6; }
-  .header-search span.hs-placeholder{ font-size:13.5px; color:var(--text-muted); }
-  .header-heart{
-    background:var(--paper); border:1px solid var(--line); color:var(--text-main);
-    width:40px; height:40px; border-radius:50%; font-size:16px; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  }
-  .header-heart.has-likes{ color:var(--pink); border-color:var(--pink); }
-  .logo{
     display:flex; align-items:center; gap:10px;
-    font-size:0; /* text hidden inline, using spans */
+    background:rgba(255,255,255,0.95); border:none; border-radius:24px;
+    padding:9px 14px; cursor:pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .header-search .hs-icon{ width:18px; height:18px; opacity:0.5; flex-shrink:0; }
+  .header-search .hs-placeholder{ font-size:14px; color:var(--text-muted); }
+
+  .banner-carousel{
+    margin-top:8px; overflow:hidden; position:relative;
+  }
+  .banner-track{
+    display:flex; overflow-x:auto; scroll-behavior:smooth;
+    gap:0; -webkit-overflow-scrolling:touch;
+  }
+  .banner-slide{
+    flex-shrink:0; width:100vw; height:280px;
+    background-size:cover; background-position:center;
+    position:relative; display:flex; align-items:flex-end; padding:20px;
+  }
+  .banner-dots{
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+    display:flex; gap:6px; z-index:10;
+  }
+  .banner-dot{
+    width:8px; height:8px; border-radius:50%;
+    background:rgba(255,255,255,0.4); cursor:pointer;
+    transition: all .3s ease;
+  }
+  .banner-dot.active{ background:rgba(255,255,255,0.95); width:24px; border-radius:4px; }
+
+  .logo-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:1180px; margin:8px auto 0; padding:0 16px;
+  }
+  .logo-compact{
+    display:flex; align-items:center; gap:6px;
+    background:none; border:none; cursor:pointer; padding:8px 0;
+    font-family:var(--font-display),sans-serif;
+  }
+  .logo-letter{
+    background:var(--yellow); color:var(--ink);
+    font-size:18px; font-weight:900; padding:4px 8px; border-radius:6px; line-height:1;
+  }
+  .logo-word-compact{
+    font-size:16px; font-weight:900; letter-spacing:0.5px;
+  }
+
+  .header-inner{
+    display:none;
+  }
+  .header-searchrow{
+    display:none;
+  }
+  .header-heart{
+    display:none;
+  }
+  .logo{
+    display:none;
   }
   .logo-mark{
-    background:var(--yellow); color:var(--ink);
-    font-family:var(--font-display),sans-serif; font-size:20px; padding:6px 10px;
-    border-radius:8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12); border:none; cursor:pointer; line-height:1;
+    display:none;
   }
   .logo-word{
-    font-family:var(--font-display),sans-serif; font-size:18px; letter-spacing:0.5px;
+    display:none;
   }
   .cart-btn{
-    position:relative;
-    background:var(--paper); color:var(--ink); border:none;
-    padding:11px 18px; border-radius:999px; font-weight:700; font-size:14px;
-    cursor:pointer; display:flex; align-items:center; gap:8px;
-    transition: transform .15s ease;
-  }
-  .cart-btn:hover{ transform:translateY(-2px); }
-  .cart-btn:active{ transform:translateY(0px) scale(0.97); }
-  .cart-count{
-    position:absolute; top:-8px; right:-8px;
-    background:var(--pink); color:white; font-family:'JetBrains Mono',monospace;
-    font-weight:700; font-size:11px; min-width:20px; height:20px;
-    border-radius:50%; display:flex; align-items:center; justify-content:center;
-    border:2px solid var(--asphalt);
-  }
-  .auth-btn{
     background:var(--mint); color:#fff; border:none;
     padding:10px 16px; border-radius:999px; font-weight:800; font-size:13px;
     cursor:pointer; display:flex; align-items:center; gap:6px; flex-shrink:0;
@@ -1186,29 +1219,44 @@
   <span class="app-loading-mark">P</span>
 </div>
 
-<header>
-  <div class="header-inner">
-    <div class="logo">
-      <button class="logo-mark" id="logoHomeBtn" title="Ir al inicio">P</button>
-      <span class="logo-word" id="logoWord">PREZZIR</span>
+<header class="header-shein">
+  <div class="header-icons">
+    <button class="h-icon-btn" id="headerMailBtn" title="Correo">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/>
+      </svg>
+    </button>
+    <div class="header-search-wrapper">
+      <div class="header-search" id="headerSearchBtn">
+        <svg class="hs-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span class="hs-placeholder">Buscar</span>
+      </div>
     </div>
-    <div style="display:flex; gap:8px; align-items:center;">
-      <button class="auth-btn" id="accountBtn">Iniciar/Crear</button>
-      <button class="cart-btn" id="cartBtn" style="display:none;">
-        🛒 Carrito
-        <span class="cart-count" id="cartCount">0</span>
-      </button>
-    </div>
+    <button class="h-icon-btn" id="headerCameraBtn" title="Búsqueda visual">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+      </svg>
+    </button>
+    <button class="h-icon-btn" id="headerHeartBtn" title="Favoritos">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
   </div>
-  <div class="header-searchrow">
-    <div class="header-search" id="headerSearchBtn">
-      <span class="hs-icon">🔍</span>
-      <span class="hs-placeholder">Buscar productos...</span>
-    </div>
-    <button class="header-heart" id="headerHeartBtn" title="Favoritos">♡</button>
-    <button class="header-heart" id="darkModeBtn" title="Modo oscuro">🌙</button>
+
+  <!-- Carrusel Banner tipo Shein -->
+  <div class="banner-carousel" id="bannerCarousel" style="display:none;">
+    <div class="banner-track" id="bannerTrack"></div>
+    <div class="banner-dots" id="bannerDots"></div>
   </div>
 </header>
+
+<div class="logo-bar" id="logoBar">
+  <button class="logo-compact" id="logoHomeBtnCompact" title="Ir al inicio">
+    <span class="logo-letter">P</span><span class="logo-word-compact">REZZIR</span>
+  </button>
+  <button class="auth-btn" id="accountBtn">Iniciar/Crear</button>
+</div>
 
 <div class="categories-wrap" id="categoriesWrap">
   <button class="cat-menu-toggle" id="catMenuToggle" title="Categorías">☰</button>
@@ -1818,6 +1866,7 @@ const DEFAULT_THEME = {
   catDisplayStyle: "circles",
   catTabUseImages: false,
   carouselSlides: [],
+  bannerImages: [],
   coupons: [],
   sectionOrder: ["hero","stories","catgrid","carousel"],
   flyToCartEnabled: true
@@ -2359,6 +2408,52 @@ function renderStories(){
   });
 }
 
+function renderBannerCarousel(){
+  const carousel = document.getElementById('bannerCarousel');
+  const track = document.getElementById('bannerTrack');
+  const dots = document.getElementById('bannerDots');
+  
+  if(!currentTheme.bannerImages || currentTheme.bannerImages.length === 0){
+    if(carousel) carousel.style.display = 'none';
+    return;
+  }
+  
+  if(carousel) carousel.style.display = 'block';
+  
+  track.innerHTML = currentTheme.bannerImages.map((img, idx) => `
+    <div class="banner-slide" style="background-image: url('${img}');" data-idx="${idx}"></div>
+  `).join('');
+  
+  dots.innerHTML = currentTheme.bannerImages.map((_, idx) => `
+    <button class="banner-dot ${idx === 0 ? 'active' : ''}" data-idx="${idx}"></button>
+  `).join('');
+  
+  let currentSlide = 0;
+  const totalSlides = currentTheme.bannerImages.length;
+  
+  function updateCarousel(){
+    const offset = -currentSlide * 100;
+    track.style.transform = `translateX(${offset}%)`;
+    dots.querySelectorAll('.banner-dot').forEach((dot, idx) => {
+      dot.classList.toggle('active', idx === currentSlide);
+    });
+  }
+  
+  // Auto scroll cada 5 segundos
+  setInterval(() => {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateCarousel();
+  }, 5000);
+  
+  // Click en los dots
+  dots.querySelectorAll('.banner-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      currentSlide = parseInt(dot.dataset.idx);
+      updateCarousel();
+    });
+  });
+}
+
 /* ---------- PRODUCT DETAIL MODAL ---------- */
 const pdOverlay = document.getElementById('pdOverlay');
 let pdCurrentId = null;
@@ -2771,7 +2866,17 @@ function openFavorites(){
   renderSearchResultItems(PRODUCTS.filter(p=>liked.has(p.id)), 'Aún no tienes favoritos. Toca el corazón ♡ en cualquier producto.');
   setTimeout(()=>input.focus(), 150);
 }
+
+// Header Shein - nuevos botones
 document.getElementById('headerHeartBtn')?.addEventListener('click', openFavorites);
+document.getElementById('headerMailBtn')?.addEventListener('click', ()=> showToast('Sección de correo próximamente'));
+document.getElementById('headerCameraBtn')?.addEventListener('click', ()=> showToast('Búsqueda visual próximamente'));
+document.getElementById('logoHomeBtnCompact')?.addEventListener('click', ()=>{
+  activeCat = "Todos";
+  renderCategories();
+  renderGrid();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
 /* ---------- MODO OSCURO ---------- */
 function getEffectiveDisplayFont(){
@@ -2790,10 +2895,11 @@ function applyDarkMode(isDark){
   try{ saved = localStorage.getItem('prezzir_dark_mode'); }catch(e){}
   applyDarkMode(saved === '1');
 })();
-document.getElementById('darkModeBtn')?.addEventListener('click', ()=>{
-  const isDark = document.documentElement.getAttribute('data-mode') === 'dark';
-  applyDarkMode(!isDark);
-});
+// Dark mode button removido del header Shein
+// document.getElementById('darkModeBtn')?.addEventListener('click', ()=>{
+//   const isDark = document.documentElement.getAttribute('data-mode') === 'dark';
+//   applyDarkMode(!isDark);
+// });
 
 /* ---------- MENÚ DE CATEGORÍAS EN ESCRITORIO ---------- */
 document.getElementById('catMenuToggle')?.addEventListener('click', ()=>{
@@ -2872,6 +2978,7 @@ async function loadProducts(){
   renderGrid();
   renderDrawer();
   renderStories();
+  renderBannerCarousel();
 }
 
 async function insertProductToDB(product){
@@ -2889,12 +2996,13 @@ async function deleteProductFromDB(id){
   if(error){ showToast('No se pudo eliminar el producto'); }
 }
 
-document.getElementById('logoHomeBtn')?.addEventListener('click', ()=>{
-  activeCat = "Todos";
-  renderCategories();
-  renderGrid();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+// Logo antiguo - evento movido a logoHomeBtnCompact
+// document.getElementById('logoHomeBtn')?.addEventListener('click', ()=>{
+//   activeCat = "Todos";
+//   renderCategories();
+//   renderGrid();
+//   window.scrollTo({ top: 0, behavior: 'smooth' });
+// });
 
 const productsReadyPromise = loadProducts();
 
