@@ -189,24 +189,15 @@ button {
 </div>
 
 <script>
+// Inicializar Supabase
+const SUPABASE_URL = "https://iptecxrdfxgmpcrhdykc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_wEiXBT1c7YSU_MwifDZLaA_f47zFV5a";
+
+let supabase = null;
+
 // Esperar a que Supabase esté disponible
-async function initSupabase() {
-  if (!window.supabase) {
-    console.error('Supabase no cargó');
-    return;
-  }
-  
-  const SUPABASE_URL = "https://iptecxrdfxgmpcrhdykc.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwdGVjeHJkZnhnbXBjcmhkeWtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTI4MTEwMDAsImV4cCI6MTkyNDM0NzAwMH0.sb_publishable_wEiXBT1c7YSU_MwifDZLaA_f47zFV5a";
-
-  window.db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-}
-
-// Inicializar cuando esté listo
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initSupabase);
-} else {
-  initSupabase();
+if (window.supabase) {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
 
 function switchToRegister() {
@@ -226,20 +217,30 @@ async function handleLogin(e) {
   const password = document.getElementById('loginPassword').value;
   const errorDiv = document.getElementById('loginError');
   
-  if (!window.db) {
-    errorDiv.textContent = 'Error: No se conectó a la base de datos';
+  if (!email || !password) {
+    errorDiv.textContent = 'Rellena todos los campos';
+    return;
+  }
+  
+  if (!email.includes('@')) {
+    errorDiv.textContent = 'Email inválido';
+    return;
+  }
+  
+  if (!supabase) {
+    errorDiv.textContent = 'Error: Sin conexión a base de datos';
     return;
   }
   
   errorDiv.textContent = 'Conectando...';
   
   try {
-    const { data, error } = await window.db.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email, password
     });
     
     if (error) {
-      errorDiv.textContent = 'Email o contraseña incorrectos';
+      errorDiv.textContent = error.message || 'Email o contraseña incorrectos';
       return;
     }
     
@@ -261,6 +262,16 @@ async function handleRegister(e) {
   const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
   const errorDiv = document.getElementById('registerError');
   
+  if (!name || !email || !password || !passwordConfirm) {
+    errorDiv.textContent = 'Rellena todos los campos';
+    return;
+  }
+  
+  if (!email.includes('@')) {
+    errorDiv.textContent = 'Email inválido';
+    return;
+  }
+  
   if (password !== passwordConfirm) {
     errorDiv.textContent = 'Las contraseñas no coinciden';
     return;
@@ -271,15 +282,15 @@ async function handleRegister(e) {
     return;
   }
   
-  if (!window.db) {
-    errorDiv.textContent = 'Error: No se conectó a la base de datos';
+  if (!supabase) {
+    errorDiv.textContent = 'Error: Sin conexión a base de datos';
     return;
   }
   
   errorDiv.textContent = 'Creando cuenta...';
   
   try {
-    const { data, error } = await window.db.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -288,7 +299,7 @@ async function handleRegister(e) {
     });
     
     if (error) {
-      errorDiv.textContent = 'Error: ' + error.message;
+      errorDiv.textContent = error.message || 'Error al crear cuenta';
       return;
     }
     
