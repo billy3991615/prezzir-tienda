@@ -688,6 +688,89 @@
   }
   .promo-carousel-dot.active{ background:var(--ink); opacity:1; }
 
+  /* ---------- CARRUSEL ESTILO SHEIN (banner superior, full-bleed) ---------- */
+  .shein-banner{
+    position:relative; width:100%; overflow:hidden;
+    height:300px;
+    background:linear-gradient(135deg, #2b2420, #1c1c1e);
+    touch-action:pan-y;
+  }
+  .shein-banner-track{
+    position:absolute; inset:0; display:flex; height:100%;
+    will-change:transform;
+  }
+  .shein-banner-track.dragging{ transition:none !important; }
+  .shein-banner-slide{
+    position:relative; flex:0 0 100%; height:100%; overflow:hidden;
+  }
+  .shein-banner-slide img, .shein-banner-slide video{
+    width:100%; height:100%; object-fit:cover; display:block; pointer-events:none;
+  }
+  .shein-banner-slide .promo-slide-rating{
+    position:absolute; left:14px; bottom:16px; z-index:3;
+    display:flex; align-items:center; gap:6px;
+    background:rgba(10,13,22,0.6); backdrop-filter:blur(6px);
+    padding:5px 12px; border-radius:99px; font-size:12px; font-weight:700;
+    color:#fff; white-space:nowrap; max-width:80%; overflow:hidden; text-overflow:ellipsis;
+    cursor:pointer;
+  }
+  .shein-banner-slide .promo-slide-rating .stars{ color:#f5a623; letter-spacing:1px; }
+  .shein-banner-fade{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.28) 100%);
+  }
+  .shein-banner-overlay{
+    position:absolute; top:0; left:0; right:0; z-index:4;
+    padding:calc(14px + env(safe-area-inset-top,0px)) 14px 10px;
+  }
+  .shein-banner-toprow{
+    display:flex; align-items:center; gap:8px;
+  }
+  .shein-mini-icon{
+    flex-shrink:0; width:38px; height:38px; border-radius:50%;
+    background:rgba(255,255,255,0.22); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,0.35); color:#fff;
+    font-size:16px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:transform .15s ease, background .15s ease;
+  }
+  .shein-mini-icon:hover{ background:rgba(255,255,255,0.32); transform:translateY(-1px); }
+  .shein-mini-icon:active{ transform:scale(0.94); }
+  .shein-mini-icon.has-likes{ color:var(--pink); }
+  .shein-banner-search{
+    flex:1; display:flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.92); border-radius:999px;
+    padding:9px 16px; cursor:pointer; min-width:0;
+    box-shadow:0 2px 10px rgba(0,0,0,0.12);
+  }
+  .shein-banner-search .hs-icon{ font-size:14px; opacity:0.55; flex-shrink:0; }
+  .shein-banner-search .hs-placeholder{
+    font-size:13.5px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .shein-banner .promo-carousel-dots{
+    position:absolute; bottom:14px; left:50%; transform:translateX(-50%); z-index:5;
+    display:flex; gap:6px;
+  }
+  .shein-banner .promo-carousel-dot{
+    width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.5); opacity:1; cursor:pointer; border:none; padding:0;
+    transition:width .2s ease, background .2s ease;
+  }
+  .shein-banner .promo-carousel-dot.active{ background:#fff; width:16px; border-radius:4px; }
+  .shein-banner-empty{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:rgba(255,255,255,0.5); font-size:13px; text-align:center; padding:0 30px;
+  }
+  .mail-dropdown{
+    position:fixed; z-index:80; background:var(--paper); border-radius:14px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.25); padding:10px; width:210px;
+    top:64px; right:14px;
+  }
+  .mail-dropdown a{
+    display:flex; align-items:center; gap:8px; padding:9px 10px; border-radius:9px;
+    text-decoration:none; color:var(--text-main); font-size:13.5px; font-weight:600;
+  }
+  .mail-dropdown a:hover{ background:var(--asphalt); }
+  .mail-dropdown small{ display:block; padding:8px 10px 2px; color:var(--text-muted); }
+
   .icon-btn{
     width:32px; height:32px; border-radius:8px; border:1px solid #ddd; background:white;
     cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;
@@ -1200,15 +1283,26 @@
       </button>
     </div>
   </div>
-  <div class="header-searchrow">
-    <div class="header-search" id="headerSearchBtn">
-      <span class="hs-icon">🔍</span>
-      <span class="hs-placeholder">Buscar productos...</span>
-    </div>
-    <button class="header-heart" id="headerHeartBtn" title="Favoritos">♡</button>
-    <button class="header-heart" id="darkModeBtn" title="Modo oscuro">🌙</button>
-  </div>
 </header>
+
+<div class="shein-banner" id="sheinBanner">
+  <div class="shein-banner-track" id="promoCarouselTrack"></div>
+  <div class="shein-banner-fade"></div>
+  <div class="shein-banner-overlay">
+    <div class="shein-banner-toprow">
+      <button class="shein-mini-icon" id="mailIconBtn" title="Contáctanos">✉️</button>
+      <div class="shein-banner-search" id="headerSearchBtn">
+        <span class="hs-icon">🔍</span>
+        <span class="hs-placeholder">Buscar productos...</span>
+      </div>
+      <button class="shein-mini-icon" id="headerHeartBtn" title="Favoritos">♡</button>
+      <button class="shein-mini-icon" id="darkModeBtn" title="Modo oscuro">🌙</button>
+    </div>
+  </div>
+  <div class="promo-carousel-dots" id="promoCarouselDots"></div>
+</div>
+
+<div id="mailDropdown" class="mail-dropdown" style="display:none;"></div>
 
 <div class="categories-wrap" id="categoriesWrap">
   <button class="cat-menu-toggle" id="catMenuToggle" title="Categorías">☰</button>
@@ -1229,13 +1323,6 @@
 
 <div class="cat-grid-wrap" id="catGridWrap">
   <div class="cat-grid" id="catIconGrid"></div>
-</div>
-
-<div class="promo-carousel-wrap" id="promoCarouselWrap" style="display:none;">
-  <div class="promo-carousel" id="promoCarousel">
-    <div class="promo-carousel-track" id="promoCarouselTrack"></div>
-    <div class="promo-carousel-dots" id="promoCarouselDots"></div>
-  </div>
 </div>
 
 <div class="cat-page-header" id="categoryPageHeader" style="display:none;">
@@ -1397,19 +1484,19 @@
         <small>Apaga para usar iconos (por defecto). Enciende para usar las fotos de cada categoría directamente en esa misma fila — esto oculta automáticamente la fila grande de círculos de abajo, para no repetir lo mismo dos veces.</small>
       </div>
       <div class="field">
-        <label>Carrusel (hasta 4 elementos)</label>
+        <label>Carrusel tipo SHEIN (hasta 30 imágenes)</label>
         <div id="carouselSlideList"></div>
         <div style="display:flex; gap:8px; margin-top:6px;">
           <label class="add-color-btn" id="addCarouselImgBtn" style="flex:1; text-align:center; cursor:pointer;">
-            📷 Añadir imagen
-            <input type="file" accept="image/*" id="carouselImgInput" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
+            📷 Añadir imágenes (puedes elegir varias)
+            <input type="file" accept="image/*" id="carouselImgInput" multiple style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
           </label>
           <label class="add-color-btn" id="addCarouselVidBtn" style="flex:1; text-align:center; cursor:pointer;">
             🎬 Añadir video
             <input type="file" accept="video/*" id="carouselVidInput" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
           </label>
         </div>
-        <small>Los videos deben ser cortos (pocos segundos) para que la tienda cargue rápido.</small>
+        <small>Los videos deben ser cortos (pocos segundos) para que la tienda cargue rápido. Puedes seleccionar varias imágenes de una vez.</small>
       </div>
     </div>
     <div class="admin-body" id="tab-estilo" style="display:none;">
@@ -1923,8 +2010,7 @@ function updateCategoryView(){
 const REORDERABLE_SECTIONS = [
   { id:'hero', label:'Banner principal', selector:'.hero' },
   { id:'stories', label:'Destacados', selector:'#stories-wrap-section' },
-  { id:'catgrid', label:'Categorías', selector:'#catGridWrap' },
-  { id:'carousel', label:'Carrusel promocional', selector:'#promoCarouselWrap' }
+  { id:'catgrid', label:'Categorías', selector:'#catGridWrap' }
 ];
 function applySectionOrder(){
   const order = (currentTheme.sectionOrder && currentTheme.sectionOrder.length) ? currentTheme.sectionOrder : DEFAULT_THEME.sectionOrder;
@@ -1942,14 +2028,13 @@ function updateCategoryVisibility(){
   const hero = document.querySelector('.hero');
   const stories = document.getElementById('stories-wrap-section');
   const catGridWrap = document.getElementById('catGridWrap');
-  const promoWrap = document.getElementById('promoCarouselWrap');
+  const sheinBanner = document.getElementById('sheinBanner');
   const catHeader = document.getElementById('categoryPageHeader');
-  const useCarousel = currentTheme.catDisplayStyle === 'carousel';
   const hasFeatured = PRODUCTS.some(p=>p.featured);
   if(hero) hero.style.display = isHome ? '' : 'none';
   if(stories) stories.style.display = (isHome && hasFeatured) ? '' : 'none';
-  if(catGridWrap) catGridWrap.style.display = (isHome && !useCarousel && !currentTheme.catTabUseImages) ? '' : 'none';
-  if(promoWrap) promoWrap.style.display = (isHome && useCarousel) ? '' : 'none';
+  if(catGridWrap) catGridWrap.style.display = (isHome && !currentTheme.catTabUseImages) ? '' : 'none';
+  if(sheinBanner) sheinBanner.style.display = isHome ? '' : 'none';
   if(catHeader){
     catHeader.style.display = isHome ? 'none' : 'flex';
     if(!isHome) document.getElementById('categoryPageTitle').textContent = activeCat;
@@ -2615,12 +2700,14 @@ function updateAccountUI(){
   const loggedOutView = document.getElementById('authLoggedOut');
   const loggedInView = document.getElementById('authLoggedIn');
   const cartBtn = document.getElementById('cartBtn');
+  const headerEl = document.querySelector('header');
   if(currentUser){
     btn.style.display = 'none';
     loggedOutView.style.display = 'none';
     loggedInView.style.display = 'block';
     document.getElementById('authUserEmail').textContent = currentUser.email;
     cartBtn.style.display = 'flex';
+    if(headerEl) headerEl.style.display = 'none';
   }else{
     btn.style.display = 'flex';
     btn.classList.remove('logged-in');
@@ -2628,6 +2715,7 @@ function updateAccountUI(){
     loggedOutView.style.display = 'block';
     loggedInView.style.display = 'none';
     cartBtn.style.display = 'none';
+    if(headerEl) headerEl.style.display = '';
   }
 }
 
@@ -3400,8 +3488,8 @@ function renderCarouselSlideList(){
 
 function addCarouselSlide(type, url){
   if(!currentTheme.carouselSlides) currentTheme.carouselSlides = [];
-  if(currentTheme.carouselSlides.length >= 4){
-    showToast('Máximo 4 elementos en el carrusel, quita uno primero');
+  if(currentTheme.carouselSlides.length >= 30){
+    showToast('Máximo 30 elementos en el carrusel, quita uno primero');
     return;
   }
   currentTheme.carouselSlides.push({type, url});
@@ -3412,9 +3500,10 @@ function addCarouselSlide(type, url){
 }
 
 document.getElementById('carouselImgInput')?.addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  compressImageFile(file, 900, (dataUrl)=> addCarouselSlide('image', dataUrl));
+  const files = Array.from(e.target.files || []);
+  files.forEach(file=>{
+    compressImageFile(file, 900, (dataUrl)=> addCarouselSlide('image', dataUrl));
+  });
   e.target.value = '';
 });
 document.getElementById('carouselVidInput')?.addEventListener('change', (e)=>{
@@ -3637,9 +3726,15 @@ function renderPromoCarousel(){
   const slides = currentTheme.carouselSlides || [];
   const track = document.getElementById('promoCarouselTrack');
   const dots = document.getElementById('promoCarouselDots');
+  const banner = document.getElementById('sheinBanner');
   if(!track || !dots) return;
   clearInterval(promoCarouselTimer);
-  if(slides.length===0){ track.innerHTML=''; dots.innerHTML=''; return; }
+  if(slides.length===0){
+    track.innerHTML = '<div class="shein-banner-empty">Añade fotos al carrusel desde el panel de administrador ✨</div>';
+    dots.innerHTML = '';
+    if(banner) banner.style.height = '300px';
+    return;
+  }
   promoCarouselIndex = Math.min(promoCarouselIndex, slides.length-1);
   track.innerHTML = slides.map(s=>{
     const inner = s.type==='video'
@@ -3652,11 +3747,18 @@ function renderPromoCarousel(){
       const stars = reviews.length
         ? (()=>{ const avg = reviews.reduce((sum,r)=>sum+r.rating,0)/reviews.length; return `<span class="stars">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))}</span>`; })()
         : '';
-      ratingHtml = `<div class="promo-slide-rating">${stars}<span>${product.name}</span></div>`;
+      ratingHtml = `<div class="promo-slide-rating" data-product-id="${product.id}">${stars}<span>${product.name}</span></div>`;
     }
-    return `<div class="promo-carousel-slide"><div class="promo-slide-float">${inner}${ratingHtml}</div></div>`;
+    return `<div class="shein-banner-slide">${inner}${ratingHtml}</div>`;
   }).join('');
-  dots.innerHTML = slides.map((s,i)=>`<button class="promo-carousel-dot ${i===promoCarouselIndex?'active':''}" data-i="${i}"></button>`).join('');
+  track.querySelectorAll('.promo-slide-rating[data-product-id]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const product = PRODUCTS.find(p=>p.id===parseInt(el.dataset.productId));
+      if(product) openProductDetail(product.id);
+    });
+  });
+  dots.innerHTML = slides.length > 1 ? slides.map((s,i)=>`<button class="promo-carousel-dot ${i===promoCarouselIndex?'active':''}" data-i="${i}"></button>`).join('') : '';
   dots.querySelectorAll('.promo-carousel-dot').forEach(dot=>{
     dot.addEventListener('click', ()=> goToPromoSlide(parseInt(dot.dataset.i)));
   });
@@ -3668,26 +3770,12 @@ function renderPromoCarousel(){
 function updatePromoCarouselPosition(){
   const track = document.getElementById('promoCarouselTrack');
   if(!track) return;
-  const slideEls = track.querySelectorAll('.promo-carousel-slide');
+  const slideEls = track.querySelectorAll('.shein-banner-slide');
   const n = slideEls.length;
+  if(n===0) return;
   const dragPct = (typeof promoDragOffsetPct === 'number') ? promoDragOffsetPct : 0;
-  slideEls.forEach((el, i)=>{
-    let offset = i - promoCarouselIndex;
-    if(offset > n/2) offset -= n;
-    if(offset < -n/2) offset += n;
-    const a = Math.abs(offset);
-    let tx=0, tz=0, ry=0, scale=1, opacity=1, z=10;
-    if(a === 0){ tx=0; tz=0; ry=0; scale=1; opacity=1; z=10; }
-    else if(a === 1){ tx=offset*85; tz=-160; ry=offset*-28; scale=0.72; opacity=0.85; z=9; }
-    else if(a === 2){ tx=offset*140; tz=-260; ry=offset*-35; scale=0.5; opacity=0.4; z=8; }
-    else{ tx=offset*170; tz=-320; ry=offset*-35; scale=0.4; opacity=0; z=0; }
-    tx += dragPct;
-    el.style.transition = promoDragActive ? 'none' : '';
-    el.style.zIndex = z;
-    el.style.opacity = opacity;
-    el.style.pointerEvents = a===0 ? 'auto' : 'none';
-    el.style.transform = `translate(-50%,-50%) translateX(${tx}%) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale})`;
-  });
+  const basePct = -promoCarouselIndex * 100;
+  track.style.transform = `translateX(calc(${basePct}% + ${dragPct}%))`;
   document.querySelectorAll('.promo-carousel-dot').forEach((d,i)=> d.classList.toggle('active', i===promoCarouselIndex));
 }
 function goToPromoSlide(i){
@@ -3695,11 +3783,12 @@ function goToPromoSlide(i){
   updatePromoCarouselPosition();
 }
 
-/* ---------- DESLIZAR CON EL DEDO EN EL CARRUSEL ---------- */
+/* ---------- DESLIZAR CON EL DEDO EN EL CARRUSEL (estilo SHEIN, lineal) ---------- */
 let promoDragActive = false;
 let promoDragStartX = 0;
 let promoDragOffsetPct = 0;
-const promoEl = document.getElementById('promoCarousel');
+const promoEl = document.getElementById('sheinBanner');
+const promoTrackEl = document.getElementById('promoCarouselTrack');
 
 function promoDragStart(x){
   const slides = currentTheme.carouselSlides || [];
@@ -3708,7 +3797,7 @@ function promoDragStart(x){
   promoDragStartX = x;
   promoDragOffsetPct = 0;
   clearInterval(promoCarouselTimer);
-  promoEl.classList.add('dragging');
+  if(promoTrackEl) promoTrackEl.classList.add('dragging');
 }
 function promoDragMove(x){
   if(!promoDragActive) return;
@@ -3719,7 +3808,7 @@ function promoDragMove(x){
 function promoDragEnd(){
   if(!promoDragActive) return;
   promoDragActive = false;
-  promoEl.classList.remove('dragging');
+  if(promoTrackEl) promoTrackEl.classList.remove('dragging');
   const slides = currentTheme.carouselSlides || [];
   const threshold = 15; // % del ancho del carrusel para considerar el deslizamiento
   if(promoDragOffsetPct <= -threshold){
@@ -3740,6 +3829,38 @@ if(promoEl){
   promoEl.addEventListener('pointercancel', promoDragEnd);
   promoEl.addEventListener('pointerleave', ()=>{ if(promoDragActive) promoDragEnd(); });
 }
+
+/* ---------- ICONO DE CORREO: menú de contacto ---------- */
+document.getElementById('mailIconBtn')?.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  const dd = document.getElementById('mailDropdown');
+  const btn = document.getElementById('mailIconBtn');
+  if(!dd) return;
+  const social = currentTheme.social || {};
+  const rows = [];
+  if(social.whatsapp && social.whatsapp.trim()) rows.push(`<a href="${social.whatsapp.trim()}" target="_blank" rel="noopener">💬 WhatsApp</a>`);
+  if(social.instagram && social.instagram.trim()) rows.push(`<a href="${social.instagram.trim()}" target="_blank" rel="noopener">📸 Instagram</a>`);
+  if(social.tiktok && social.tiktok.trim()) rows.push(`<a href="${social.tiktok.trim()}" target="_blank" rel="noopener">🎵 TikTok</a>`);
+  if(social.facebook && social.facebook.trim()) rows.push(`<a href="${social.facebook.trim()}" target="_blank" rel="noopener">👍 Facebook</a>`);
+  dd.innerHTML = rows.length ? rows.join('') : '<small>Aún no hay redes configuradas.</small>';
+  const isOpen = dd.style.display !== 'none';
+  if(isOpen){
+    dd.style.display = 'none';
+  }else{
+    const rect = btn.getBoundingClientRect();
+    dd.style.top = (rect.bottom + 8) + 'px';
+    dd.style.left = Math.max(10, rect.left) + 'px';
+    dd.style.right = 'auto';
+    dd.style.display = 'block';
+  }
+});
+document.addEventListener('click', (e)=>{
+  const dd = document.getElementById('mailDropdown');
+  if(dd && dd.style.display !== 'none' && !dd.contains(e.target) && e.target.id !== 'mailIconBtn'){
+    dd.style.display = 'none';
+  }
+});
+
 
 function fillStyleForm(){
   document.getElementById('stName').value = currentTheme.name;
