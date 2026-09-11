@@ -1399,6 +1399,7 @@
     <div class="admin-tabs">
       <button class="admin-tab active" data-tab="productos">Productos</button>
       <button class="admin-tab" data-tab="categorias">Categorías</button>
+      <button class="admin-tab" data-tab="carrusel">Carrusel</button>
       <button class="admin-tab" data-tab="estilo">Colores</button>
       <button class="admin-tab" data-tab="tipografia">Tipografía</button>
       <button class="admin-tab" data-tab="tamanos">Tamaños</button>
@@ -1434,7 +1435,7 @@
           <span id="catStyleLabel">Círculos</span>
           <button type="button" class="toggle-switch" id="catStyleToggle"><span class="toggle-knob"></span></button>
         </div>
-        <small>Apaga para usar círculos (por defecto). Enciende para usar el carrusel de fotos/video que armes abajo.</small>
+        <small>Apaga para usar círculos (por defecto). Enciende para usar el carrusel de fotos/video que armes en la pestaña "Carrusel".</small>
       </div>
       <div class="field">
         <label>Fila de categorías de arriba</label>
@@ -1444,6 +1445,11 @@
         </div>
         <small>Apaga para usar iconos (por defecto). Enciende para usar las fotos de cada categoría directamente en esa misma fila — esto oculta automáticamente la fila grande de círculos de abajo, para no repetir lo mismo dos veces.</small>
       </div>
+      <div class="form-actions" style="margin-top:14px;">
+        <button class="form-save" id="categoriesSaveBtn" style="opacity:0.45; pointer-events:none;">Guardar cambios</button>
+      </div>
+    </div>
+    <div class="admin-body" id="tab-carrusel" style="display:none;">
       <div class="field">
         <label>Carrusel tipo SHEIN (hasta 30 imágenes)</label>
         <div id="carouselSlideList"></div>
@@ -1457,10 +1463,10 @@
             <input type="file" accept="video/*" id="carouselVidInput" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
           </label>
         </div>
-        <small>Los videos deben ser cortos (pocos segundos) para que la tienda cargue rápido. Puedes seleccionar varias imágenes de una vez.</small>
+        <small>Los videos deben ser cortos (pocos segundos) para que la tienda cargue rápido. Puedes seleccionar varias imágenes de una vez. Este es el carrusel grande que aparece arriba de todo, estilo SHEIN.</small>
       </div>
       <div class="form-actions" style="margin-top:14px;">
-        <button class="form-save" id="categoriesSaveBtn" style="opacity:0.45; pointer-events:none;">Guardar cambios</button>
+        <button class="form-save" id="carouselSaveBtn" style="opacity:0.45; pointer-events:none;">Guardar cambios</button>
       </div>
     </div>
     <div class="admin-body" id="tab-estilo" style="display:none;">
@@ -3060,15 +3066,25 @@ document.getElementById('newProductBtn')?.addEventListener('click', ()=> openFor
 document.getElementById('productsSaveBtn')?.addEventListener('click', async ()=>{
   if(pendingFeaturedIds.size === 0) return;
   const ids = [...pendingFeaturedIds];
+  let failedCount = 0;
   for(const id of ids){
     const p = PRODUCTS.find(x=>x.id===id);
-    if(p) await updateProductInDB(p);
+    if(!p) continue;
+    const ok = await updateProductInDB(p);
+    if(ok){
+      pendingFeaturedIds.delete(id);
+    }else{
+      failedCount++;
+    }
   }
-  pendingFeaturedIds.clear();
   renderAdminList();
   renderStories();
   updateProductsSaveBtnState();
-  showToast('Cambios guardados');
+  if(failedCount > 0){
+    showToast(`No se guardaron ${failedCount} cambio(s) — revisa tu conexión e intenta de nuevo`);
+  }else{
+    showToast('Cambios guardados');
+  }
 });
 
 /* ---------- FORMULARIO: crear / editar producto ---------- */
@@ -3247,7 +3263,7 @@ document.getElementById('formSaveBtn')?.addEventListener('click', async ()=>{
 });
 
 /* ---------- PESTAÑAS DEL PANEL ADMIN ---------- */
-const TAB_IDS = ['productos','categorias','estilo','tipografia','tamanos','redes','cupones','estadisticas','orden'];
+const TAB_IDS = ['productos','categorias','carrusel','estilo','tipografia','tamanos','redes','cupones','estadisticas','orden'];
 document.querySelectorAll('.admin-tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
@@ -3255,7 +3271,8 @@ document.querySelectorAll('.admin-tab').forEach(tab=>{
     TAB_IDS.forEach(id=>{
       document.getElementById('tab-'+id).style.display = (tab.dataset.tab===id) ? 'block' : 'none';
     });
-    if(tab.dataset.tab==='categorias'){ renderCatManageList(); fillCatStyleToggle(); fillCatTabToggle(); renderCarouselSlideList(); }
+    if(tab.dataset.tab==='categorias'){ renderCatManageList(); fillCatStyleToggle(); fillCatTabToggle(); }
+    if(tab.dataset.tab==='carrusel'){ renderCarouselSlideList(); }
     if(tab.dataset.tab==='estilo') fillStyleForm();
     if(tab.dataset.tab==='tipografia') fillFontForm();
     if(tab.dataset.tab==='tamanos') fillSizesForm();
@@ -3449,7 +3466,7 @@ function renderCarouselSlideList(){
       currentTheme.carouselSlides.splice(parseInt(btn.dataset.idx), 1);
       renderCarouselSlideList();
       renderPromoCarousel();
-      markCategoriesDirty();
+      markCarouselDirty();
       showToast('Elemento quitado — pulsa "Guardar cambios"');
     });
   });
@@ -3458,10 +3475,17 @@ function renderCarouselSlideList(){
       const idx = parseInt(sel.dataset.idx);
       currentTheme.carouselSlides[idx].productId = sel.value ? parseInt(sel.value) : null;
       renderPromoCarousel();
-      markCategoriesDirty();
+      markCarouselDirty();
       showToast('Producto vinculado — pulsa "Guardar cambios"');
     });
   });
+}
+
+function markCarouselDirty(){
+  const btn = document.getElementById('carouselSaveBtn');
+  if(!btn) return;
+  btn.style.opacity = '1';
+  btn.style.pointerEvents = 'auto';
 }
 
 function addCarouselSlide(type, url){
@@ -3473,13 +3497,20 @@ function addCarouselSlide(type, url){
   currentTheme.carouselSlides.push({type, url});
   renderCarouselSlideList();
   renderPromoCarousel();
-  markCategoriesDirty();
+  markCarouselDirty();
   showToast('Añadido — pulsa "Guardar cambios"');
 }
 
 document.getElementById('categoriesSaveBtn')?.addEventListener('click', async ()=>{
   await saveThemeToStorage();
   const btn = document.getElementById('categoriesSaveBtn');
+  if(btn){ btn.style.opacity = '0.45'; btn.style.pointerEvents = 'none'; }
+  showToast('Cambios guardados');
+});
+
+document.getElementById('carouselSaveBtn')?.addEventListener('click', async ()=>{
+  await saveThemeToStorage();
+  const btn = document.getElementById('carouselSaveBtn');
   if(btn){ btn.style.opacity = '0.45'; btn.style.pointerEvents = 'none'; }
   showToast('Cambios guardados');
 });
