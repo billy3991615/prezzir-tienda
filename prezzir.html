@@ -121,91 +121,46 @@
   a, button{font-family:inherit;}
 
   /* ---------- HEADER ---------- */
-  header.header-top{
-    position:sticky; top:0; z-index:50;
-    background: transparent;
-    border:none;
-    box-shadow: none;
-    padding: 0;
-    width:100%;
+  header{
+    position:static; z-index:40;
+    background:var(--surface-blur);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
   }
-  .header-bar{
-    display:flex; align-items:center; gap:5px; justify-content:flex-start;
-    padding: 12px 8px;
-    width: 100%;
-    box-sizing: border-box;
-    flex-wrap: nowrap;
-    min-height: 50px;
-    overflow: visible;
-    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 100%);
+  .header-inner{
+    max-width:1180px; margin:0 auto; padding:14px 20px 10px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
   }
-  .h-icon{
-    width:30px; height:30px; border-radius:50%;
-    background: transparent; border: 1.5px solid var(--pink);
-    color: var(--pink); cursor:pointer; display:flex; align-items:center; justify-content:center;
-    transition: all .2s ease; flex-shrink:0; padding:0;
+  .header-searchrow{
+    max-width:1180px; margin:0 auto; padding:0 20px 12px;
+    display:flex; align-items:center; gap:10px;
   }
-  .h-icon:hover{ background: var(--pink); color: white; }
-  .h-icon:active{ transform:scale(0.92); }
-  .h-icon svg{ width:14px; height:14px; stroke:currentColor; }
   .header-search{
-    flex:1; display:flex; align-items:center; gap:6px;
-    background:rgba(255,255,255,0.95); border:none; border-radius:24px;
-    padding:10px 14px; cursor:pointer; min-height:40px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    margin: 0 6px;
+    flex:1; display:flex; align-items:center; gap:8px;
+    background:var(--paper); border:1px solid var(--line); border-radius:999px;
+    padding:10px 16px; cursor:pointer;
   }
-  .header-search .hs-icon{ width:16px; height:16px; opacity:0.5; flex-shrink:0; stroke:currentColor; }
-  .header-search .hs-placeholder{ font-size:12px; color:var(--text-muted); white-space:nowrap; }
-  .banner-carousel{
-    margin:0; overflow:hidden; position:relative; height:300px;
-    background: linear-gradient(135deg, rgba(255, 45, 120, 0.08) 0%, rgba(0, 224, 168, 0.08) 100%);
-    width:100%;
-    left:0; right:0; top:0;
+  .header-search span.hs-icon{ font-size:15px; opacity:0.6; }
+  .header-search span.hs-placeholder{ font-size:13.5px; color:var(--text-muted); }
+  .header-heart{
+    background:var(--paper); border:1px solid var(--line); color:var(--text-main);
+    width:40px; height:40px; border-radius:50%; font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
-  .banner-track{
-    display:flex; height:100%; -webkit-overflow-scrolling:touch;
-    scroll-behavior:smooth; transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  .header-heart.has-likes{ color:var(--pink); border-color:var(--pink); }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-size:0; /* text hidden inline, using spans */
   }
-  .banner-slide{
-    flex-shrink:0; width:100%; height:300px;
-    background-size:cover; background-position:center;
-    display:flex; align-items:flex-end; padding:16px;
-  }
-  .banner-dots{
-    position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
-    display:flex; gap:6px; z-index:10;
-  }
-  .banner-dot{
-    width:8px; height:8px; border-radius:50%;
-    background: var(--mint); opacity:0.3; cursor:pointer;
-    transition: all .3s ease; border:none; padding:0;
-  }
-  .banner-dot.active{ background: var(--pink); opacity: 1; width:24px; border-radius:4px; }
-  .header-logo-bar{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:8px 14px 0; margin:0;
-  }
-  .logo-mini{
-    display:flex; align-items:center; gap:6px;
-    background:none; border:none; cursor:pointer; padding:8px 0;
-    font-family:var(--font-display),sans-serif;
-  }
-  .lm-letter{
+  .logo-mark{
     background:var(--yellow); color:var(--ink);
-    font-size:18px; font-weight:900; padding:4px 8px; border-radius:6px; line-height:1;
+    font-family:var(--font-display),sans-serif; font-size:20px; padding:6px 10px;
+    border-radius:8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12); border:none; cursor:pointer; line-height:1;
   }
-  .lm-word{
-    font-size:16px; font-weight:900; letter-spacing:0.5px;
+  .logo-word{
+    font-family:var(--font-display),sans-serif; font-size:18px; letter-spacing:0.5px;
   }
-
-  /* Ocultar elementos antiguos del header */
-  .header-inner{ display:none; }
-  .header-searchrow{ display:none; }
-  .header-heart{ display:none; }
-  .logo{ display:none; }
-  .logo-mark{ display:none; }
-  .logo-word{ display:none; }
   .cart-btn{
     position:relative;
     background:var(--paper); color:var(--ink); border:none;
@@ -1231,31 +1186,41 @@
   <span class="app-loading-mark">P</span>
 </div>
 
-<header class="header-top">
-  <div class="header-bar">
-    <button class="h-icon" id="headerMailBtn" title="Correo"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></button>
-    <div class="header-search" id="headerSearchBtn">
-      <svg class="hs-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <span class="hs-placeholder">Buscar</span>
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <button class="logo-mark" id="logoHomeBtn" title="Ir al inicio">P</button>
+      <span class="logo-word" id="logoWord">PREZZIR</span>
     </div>
-    <button class="h-icon" id="headerCameraBtn" title="Búsqueda visual"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
-    <button class="h-icon" id="headerHeartBtn" title="Favoritos"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button class="auth-btn" id="accountBtn">Iniciar/Crear</button>
+      <button class="cart-btn" id="cartBtn" style="display:none;">
+        🛒 Carrito
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
   </div>
-  <div class="banner-carousel" id="bannerCarousel" style="display:none;">
-    <div class="banner-track" id="bannerTrack"></div>
-    <div class="banner-dots" id="bannerDots"></div>
+  <div class="header-searchrow">
+    <div class="header-search" id="headerSearchBtn">
+      <span class="hs-icon">🔍</span>
+      <span class="hs-placeholder">Buscar productos...</span>
+    </div>
+    <button class="header-heart" id="headerHeartBtn" title="Favoritos">♡</button>
+    <button class="header-heart" id="darkModeBtn" title="Modo oscuro">🌙</button>
   </div>
 </header>
-
-<div class="header-logo-bar">
-  <button class="logo-mini" id="logoHomeBtnMini" title="Ir al inicio"><span class="lm-letter">P</span><span class="lm-word">REZZIR</span></button>
-  <button class="auth-btn" id="accountBtn">Iniciar/Crear</button>
-</div>
 
 <div class="categories-wrap" id="categoriesWrap">
   <button class="cat-menu-toggle" id="catMenuToggle" title="Categorías">☰</button>
   <div class="categories" id="categories"></div>
 </div>
+
+<section class="hero">
+  <span class="hero-tag mono" id="heroTagText">// TODO EN UN SOLO LUGAR</span>
+  <h1 id="heroTitleEl"></h1>
+  <p id="heroTagline">Streetwear, básicos y accesorios en un catálogo que se actualiza rápido. Elige talla, color, y arma tu carrito — sin vueltas.</p>
+  <button class="hero-cta" id="heroCtaBtn" onclick="document.getElementById('grid-wrap').scrollIntoView({behavior:'smooth'})">Ver catálogo ↓</button>
+</section>
 
 <div class="stories-wrap" id="stories-wrap-section">
   <span class="stories-label">Destacados · desliza →</span>
@@ -1391,8 +1356,7 @@
       <button class="admin-tab" data-tab="estilo">Colores</button>
       <button class="admin-tab" data-tab="tipografia">Tipografía</button>
       <button class="admin-tab" data-tab="tamanos">Tamaños</button>
-      <button class="admin-tab" data-tab="banner">Banner Principal</button>
-      <button class="admin-tab" data-tab="carrusel">Carrusel de Fotos</button>
+      <button class="admin-tab" data-tab="banner">Banner</button>
       <button class="admin-tab" data-tab="redes">Redes</button>
       <button class="admin-tab" data-tab="cupones">Cupones</button>
       <button class="admin-tab" data-tab="estadisticas">Estadísticas</button>
@@ -1578,25 +1542,6 @@
       <div class="form-actions">
         <button class="form-save" id="bannerSaveBtn">Guardar banner</button>
         <button class="form-cancel" id="bannerResetBtn">Restablecer</button>
-      </div>
-    </div>
-
-    <div class="admin-body" id="tab-carrusel" style="display:none;">
-      <div class="field">
-        <label>Carrusel de fotos (hasta 30 imágenes)</label>
-        <small>Las imágenes aparecerán rotando automáticamente cada 5 segundos debajo de los iconos del header.</small>
-        <div id="bannerImagesList" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;"></div>
-      </div>
-      <div class="field">
-        <div style="display:flex; gap:8px;">
-          <input type="file" accept="image/*" id="bannerImgInput" style="display:none;">
-          <button type="button" id="addBannerImgBtn" class="add-color-btn" style="flex:1; text-align:center;">📸 Agregar imagen (máximo 30)</button>
-        </div>
-        <small style="display:block; margin-top:6px;">Tamaño recomendado: 390×200px. Se comprimirán automáticamente.</small>
-      </div>
-      <div class="form-actions">
-        <button class="form-save" id="carruselSaveBtn">Guardar carrusel</button>
-        <button class="form-cancel" id="carruselResetBtn">Restablecer</button>
       </div>
     </div>
 
@@ -1873,7 +1818,6 @@ const DEFAULT_THEME = {
   catDisplayStyle: "circles",
   catTabUseImages: false,
   carouselSlides: [],
-  bannerImages: [],
   coupons: [],
   sectionOrder: ["hero","stories","catgrid","carousel"],
   flyToCartEnabled: true
@@ -1960,7 +1904,7 @@ const CATEGORY_ICONS = {
   "Mujer": "👗",
   "Hombre": "👔",
   "Unisex": "🧢",
-  "Niños": "👶",
+  "Niños": "🍼",
   "Accesorios": "💍"
 };
 function getCategoryIcon(cat){ return CATEGORY_ICONS[cat] || "🏷️"; }
@@ -2025,7 +1969,7 @@ function renderCategories(){
       const imgSrc = customImg || (sample ? sample.img : '');
       if(imgSrc) iconHtml = `<span class="pill-img"><img src="${imgSrc}" alt=""></span>`;
     }
-    return `<button class="pill ${c===activeCat?'active':''}" data-cat="${c}">${iconHtml}</button>`;
+    return `<button class="pill ${c===activeCat?'active':''}" data-cat="${c}">${iconHtml}${c}</button>`;
   }).join('');
   wrap.querySelectorAll('.pill').forEach(btn=>{
     btn.addEventListener('click', ()=> setActiveCategory(btn.dataset.cat));
@@ -2043,6 +1987,7 @@ function renderCatIconGrid(){
     const inner = imgSrc ? `<img src="${imgSrc}" alt="${c}">` : getCategoryIcon(c);
     return `<button class="cat-circle-btn" data-cat="${c}">
       <span class="cat-circle-img">${inner}</span>
+      <span class="cat-circle-label">${c}</span>
     </button>`;
   }).join('');
   wrap.querySelectorAll('.cat-circle-btn').forEach(btn=>{
@@ -2412,54 +2357,6 @@ function renderStories(){
     });
     btn.addEventListener('click', ()=> openProductDetail(parseInt(btn.dataset.pid)));
   });
-}
-
-function renderBannerCarousel(){
-  const carousel = document.getElementById('bannerCarousel');
-  const track = document.getElementById('bannerTrack');
-  const dots = document.getElementById('bannerDots');
-  
-  if(!currentTheme.bannerImages || currentTheme.bannerImages.length === 0){
-    if(carousel) carousel.style.display = 'none';
-    return;
-  }
-  
-  if(carousel) carousel.style.display = 'block';
-  
-  track.innerHTML = currentTheme.bannerImages.map((img, idx) => `
-    <div class="banner-slide" style="background-image: url('${img}')"></div>
-  `).join('');
-  
-  dots.innerHTML = currentTheme.bannerImages.map((_, idx) => `
-    <button class="banner-dot ${idx === 0 ? 'active' : ''}" data-idx="${idx}"></button>
-  `).join('');
-  
-  let currentSlide = 0;
-  const totalSlides = currentTheme.bannerImages.length;
-  
-  function goToSlide(idx){
-    currentSlide = idx % totalSlides;
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
-    dots.querySelectorAll('.banner-dot').forEach((dot, i) => {
-      dot.classList.toggle('active', i === currentSlide);
-    });
-  }
-  
-  // Auto-scroll cada 5 segundos
-  let autoScrollTimer = setInterval(() => {
-    goToSlide(currentSlide + 1);
-  }, 5000);
-  
-  // Click en dots
-  dots.querySelectorAll('.banner-dot').forEach(dot => {
-    dot.addEventListener('click', () => {
-      clearInterval(autoScrollTimer);
-      goToSlide(parseInt(dot.dataset.idx));
-      autoScrollTimer = setInterval(() => goToSlide(currentSlide + 1), 5000);
-    });
-  });
-  
-  goToSlide(0);
 }
 
 /* ---------- PRODUCT DETAIL MODAL ---------- */
@@ -2876,16 +2773,6 @@ function openFavorites(){
 }
 document.getElementById('headerHeartBtn')?.addEventListener('click', openFavorites);
 
-// Header Shein - nuevos botones
-document.getElementById('headerMailBtn')?.addEventListener('click', ()=> showToast('Correo: próximamente'));
-document.getElementById('headerCameraBtn')?.addEventListener('click', ()=> showToast('Búsqueda visual: próximamente'));
-document.getElementById('logoHomeBtnMini')?.addEventListener('click', ()=>{
-  activeCat = "Todos";
-  renderCategories();
-  renderGrid();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
 /* ---------- MODO OSCURO ---------- */
 function getEffectiveDisplayFont(){
   const isDark = document.documentElement.getAttribute('data-mode') === 'dark';
@@ -3021,28 +2908,11 @@ const ADMIN_PIN = "2626"; // puedes pedirme que lo cambie cuando quieras
 
 function openAdmin(){
   renderAdminList();
-  fillBannerForm();
-  fillCarruselForm();
-  fillSocialForm();
-  fillSizesForm();
-  
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
   document.querySelector('.admin-tab[data-tab="productos"]').classList.add('active');
-  ['productos','categorias','estilo','tipografia','tamanos','banner','carrusel','redes','cupones','estadisticas','orden'].forEach(id=>{
+  ['productos','categorias','estilo','tipografia','tamanos','banner','redes'].forEach(id=>{
     document.getElementById('tab-'+id).style.display = (id==='productos') ? 'block' : 'none';
   });
-  
-  // Event listeners para cambiar tabs
-  document.querySelectorAll('.admin-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-      ['productos','categorias','estilo','tipografia','tamanos','banner','carrusel','redes','cupones','estadisticas','orden'].forEach(id=>{
-        document.getElementById('tab-'+id).style.display = (id===tab.dataset.tab) ? 'block' : 'none';
-      });
-    });
-  });
-  
   adminOverlay.classList.add('open');
 }
 function closeAdmin(){ adminOverlay.classList.remove('open'); }
@@ -3902,34 +3772,6 @@ function fillSocialForm(){
   document.getElementById('stFacebook').value = currentTheme.social.facebook || '';
 }
 
-function renderBannerImages(){
-  const list = document.getElementById('bannerImagesList');
-  if(!currentTheme.bannerImages || currentTheme.bannerImages.length === 0){
-    list.innerHTML = '<p style="text-align:center; color:var(--text-muted);">No hay imágenes aún</p>';
-    return;
-  }
-  list.innerHTML = currentTheme.bannerImages.map((img, idx) => `
-    <div style="display:flex; align-items:center; gap:8px; padding:8px; background:var(--asphalt-2); border-radius:8px;">
-      <img src="${img}" alt="Banner ${idx+1}" style="width:60px; height:40px; object-fit:cover; border-radius:4px;">
-      <span style="flex:1; font-size:12px; color:var(--text-muted);">Imagen ${idx+1}</span>
-      <button type="button" class="remove-btn" data-idx="${idx}" style="background:#ff2d78; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">Eliminar</button>
-    </div>
-  `).join('');
-  
-  list.querySelectorAll('.remove-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const idx = parseInt(btn.dataset.idx);
-      currentTheme.bannerImages.splice(idx, 1);
-      renderBannerImages();
-    });
-  });
-}
-
-function fillCarruselForm(){
-  renderBannerImages();
-}
-
-
 function fillSizesForm(){
   const s = currentTheme.sizes;
   document.getElementById('stSizeHero').value = s.hero;
@@ -4090,38 +3932,6 @@ document.getElementById('socialResetBtn')?.addEventListener('click', ()=>{
   fillSocialForm();
   saveThemeToStorage();
   showToast('Redes restablecidas');
-});
-
-// Event listeners para el carrusel de fotos
-document.getElementById('addBannerImgBtn')?.addEventListener('click', ()=>{
-  document.getElementById('bannerImgInput').click();
-});
-document.getElementById('bannerImgInput')?.addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  if((currentTheme.bannerImages || []).length >= 30){
-    showToast('Máximo 30 imágenes permitidas');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = (evt) => {
-    if(!currentTheme.bannerImages) currentTheme.bannerImages = [];
-    currentTheme.bannerImages.push(evt.target.result);
-    renderBannerImages();
-    e.target.value = '';
-  };
-  reader.readAsDataURL(file);
-});
-document.getElementById('carruselSaveBtn')?.addEventListener('click', ()=>{
-  saveThemeToStorage();
-  renderBannerCarousel();
-  showToast('Carrusel guardado');
-});
-document.getElementById('carruselResetBtn')?.addEventListener('click', ()=>{
-  currentTheme.bannerImages = [...(DEFAULT_THEME.bannerImages || [])];
-  renderBannerImages();
-  saveThemeToStorage();
-  showToast('Carrusel restablecido');
 });
 
 const themeReadyPromise = loadTheme();
