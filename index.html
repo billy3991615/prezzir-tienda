@@ -95,7 +95,7 @@
     font-family:var(--font-body),sans-serif;
     min-height:100vh;
     min-height:100dvh;
-    min-height:100svh;
+    min-height:calc(var(--vh, 1vh) * 100);
     overflow-x:hidden;
     overscroll-behavior-y: auto;
     padding-bottom:70px;
@@ -940,14 +940,14 @@
   }
 
   /* ---------- GRID ---------- */
-  .grid-wrap{ max-width:1180px; margin:0 auto; padding:10px 20px 100px; }
+  .grid-wrap{ max-width:1180px; margin:0 auto; padding:10px 20px 40px; }
   .grid{
     display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr));
     gap:22px;
   }
   @media (max-width:640px){
     .grid{ grid-template-columns:repeat(2, 1fr); gap:12px; }
-    .grid-wrap{ padding:10px 12px 80px; }
+    .grid-wrap{ padding:10px 12px 30px; }
     .card-body{ padding:10px 10px 12px; gap:5px; }
   }
   .card{
@@ -1807,6 +1807,18 @@
 window.addEventListener('error', (e)=>{
   try{ showToast('Error: ' + (e.message || 'algo falló').slice(0,80)); }catch(_){ }
 });
+
+/* ---------- Altura real de viewport en móvil (evita espacio vacío al fondo en Safari/Chrome iOS) ---------- */
+function setRealVH(){
+  const h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+  document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
+}
+setRealVH();
+window.addEventListener('resize', setRealVH);
+window.addEventListener('orientationchange', setRealVH);
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', setRealVH);
+}
 
 const DEFAULT_PRODUCTS = [
   {id:1, name:"Hoodie Oversize Neón", cat:"Mujer", price:35, sizes:["S","M","L","XL"], colors:[["Negro","#111"],["Rosa","#ff2d78"],["Verde","#00e0a8"]], img:"https://picsum.photos/seed/hoodieneon/400/500", desc:"Hoodie oversize con felpa interior suave y ajuste amplio. Ideal para capas y días de invierno urbano."},
@@ -2928,7 +2940,7 @@ function openAdmin(){
   renderAdminList();
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
   document.querySelector('.admin-tab[data-tab="productos"]').classList.add('active');
-  ['productos','categorias','estilo','tipografia','tamanos','banner','redes'].forEach(id=>{
+  TAB_IDS.forEach(id=>{
     document.getElementById('tab-'+id).style.display = (id==='productos') ? 'block' : 'none';
   });
   adminOverlay.classList.add('open');
