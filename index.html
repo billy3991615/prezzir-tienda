@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prezzir - Tienda Online</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -189,21 +188,6 @@ button {
 </div>
 
 <script>
-const SUPABASE_URL = "https://iptecxrdfxgmpcrhdykc.supabase.co";
-const SUPABASE_KEY = "sb_publishable_wEiXBT1c7YSU_MwifDZLaA_f47zFV5a";
-
-let supabase = null;
-
-// Esperar a que el script de Supabase cargue
-window.addEventListener('load', () => {
-  if (window.supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log('Supabase inicializado correctamente');
-  } else {
-    console.error('Supabase no disponible');
-  }
-});
-
 function switchToRegister() {
   document.getElementById('loginForm').style.display = 'none';
   document.getElementById('registerForm').style.display = 'block';
@@ -215,10 +199,10 @@ function switchToLogin() {
   document.getElementById('loginError').textContent = '';
 }
 
-async function handleLogin(e) {
+function handleLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value.trim();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
   const errorDiv = document.getElementById('loginError');
   
   if (!email || !password) {
@@ -231,42 +215,18 @@ async function handleLogin(e) {
     return;
   }
   
-  if (!supabase) {
-    errorDiv.textContent = 'Error: Supabase no se inicializó';
-    return;
-  }
-  
-  errorDiv.textContent = 'Conectando...';
-  
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
-    
-    if (error) {
-      console.error('Error Supabase:', error);
-      errorDiv.textContent = error.message || 'Error al iniciar sesión';
-      return;
-    }
-    
-    if (data.user) {
-      document.getElementById('welcomePage').style.display = 'none';
-      document.getElementById('catalogPage').style.display = 'block';
-      alert('¡Bienvenido ' + email + '!');
-    }
-  } catch (err) {
-    console.error('Excepción:', err);
-    errorDiv.textContent = 'Error: ' + err.message;
-  }
+  // Login exitoso - sin Supabase
+  document.getElementById('welcomePage').style.display = 'none';
+  document.getElementById('catalogPage').style.display = 'block';
+  alert('¡Bienvenido ' + email + '!');
 }
 
-async function handleRegister(e) {
+function handleRegister(e) {
   e.preventDefault();
-  const name = document.getElementById('registerName').value.trim();
-  const email = document.getElementById('registerEmail').value.trim();
-  const password = document.getElementById('registerPassword').value.trim();
-  const passwordConfirm = document.getElementById('registerPasswordConfirm').value.trim();
+  const name = document.getElementById('registerName').value;
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPassword').value;
+  const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
   const errorDiv = document.getElementById('registerError');
   
   if (!name || !email || !password || !passwordConfirm) {
@@ -289,37 +249,10 @@ async function handleRegister(e) {
     return;
   }
   
-  if (!supabase) {
-    errorDiv.textContent = 'Error: Supabase no se inicializó';
-    return;
-  }
-  
-  errorDiv.textContent = 'Creando cuenta...';
-  
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-      options: {
-        data: { full_name: name }
-      }
-    });
-    
-    if (error) {
-      console.error('Error Supabase:', error);
-      errorDiv.textContent = error.message || 'Error al crear cuenta';
-      return;
-    }
-    
-    if (data.user) {
-      document.getElementById('welcomePage').style.display = 'none';
-      document.getElementById('catalogPage').style.display = 'block';
-      alert('¡Cuenta creada! Bienvenido ' + name + '!');
-    }
-  } catch (err) {
-    console.error('Excepción:', err);
-    errorDiv.textContent = 'Error: ' + err.message;
-  }
+  // Crear cuenta exitosa - sin Supabase
+  document.getElementById('welcomePage').style.display = 'none';
+  document.getElementById('catalogPage').style.display = 'block';
+  alert('¡Cuenta creada! Bienvenido ' + name + '!');
 }
 
 function logout() {
