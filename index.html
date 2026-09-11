@@ -831,40 +831,6 @@
   .pin-cancel{ background:none; border:none; color:#999; font-size:12.5px; cursor:pointer; }
 
   /* ---------- HERO ---------- */
-  .hero{
-    max-width:1180px; margin:14px auto 10px; padding:38px 26px;
-    position:relative; border-radius:22px;
-    background:none;
-    overflow:hidden;
-    transition: padding .15s ease, margin .15s ease;
-  }
-  .hero.hero-compact{ padding:12px 20px; margin:14px auto 4px; }
-  .hero.hero-compact .hero-tag{ margin-bottom:0; }
-  .hero-tag{
-    display:inline-block; background:var(--yellow); color:var(--ink);
-    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12px;
-    padding:6px 12px; border-radius:999px;
-    margin-bottom:22px;
-  }
-  .hero h1{
-    font-family:var(--font-display),sans-serif; font-weight:400; color:var(--ink);
-    font-size:var(--size-hero); line-height:0.95; margin:0 0 20px;
-    text-transform:uppercase;
-  }
-  .hero h1 .accent{ color:var(--pink); }
-  .hero h1 .accent2{ color:var(--ink); -webkit-text-stroke: 1.5px var(--ink); }
-  .hero p{
-    max-width:520px; font-size:var(--size-tagline); line-height:1.55; color:var(--text-muted);
-    margin:0 0 30px;
-  }
-  .hero-cta{
-    background:var(--pink); color:white; border:none;
-    font-weight:800; font-size:15px; padding:16px 30px; border-radius:12px;
-    cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.1);
-    transition: transform .15s ease, box-shadow .15s ease;
-  }
-  .hero-cta:hover{ transform:translateY(-2px); box-shadow:0 8px 22px rgba(0,0,0,0.22); }
-  .hero-cta:active{ transform:translateY(0); box-shadow:0 3px 10px rgba(0,0,0,0.18); }
 
   /* ---------- CATEGORY TABS ---------- */
   .cat-page-header{
@@ -1253,7 +1219,6 @@
   }
 
   @media (max-width:640px){
-    .hero{ padding:44px 16px 28px; }
     .header-inner{ padding:14px 16px; }
   }
 
@@ -1309,12 +1274,6 @@
   <div class="categories" id="categories"></div>
 </div>
 
-<section class="hero">
-  <span class="hero-tag mono" id="heroTagText">// TODO EN UN SOLO LUGAR</span>
-  <h1 id="heroTitleEl"></h1>
-  <p id="heroTagline">Streetwear, básicos y accesorios en un catálogo que se actualiza rápido. Elige talla, color, y arma tu carrito — sin vueltas.</p>
-  <button class="hero-cta" id="heroCtaBtn" onclick="document.getElementById('grid-wrap').scrollIntoView({behavior:'smooth'})">Ver catálogo ↓</button>
-</section>
 
 <div class="stories-wrap" id="stories-wrap-section">
   <span class="stories-label">Destacados · desliza →</span>
@@ -1443,14 +1402,16 @@
       <button class="admin-tab" data-tab="estilo">Colores</button>
       <button class="admin-tab" data-tab="tipografia">Tipografía</button>
       <button class="admin-tab" data-tab="tamanos">Tamaños</button>
-      <button class="admin-tab" data-tab="banner">Banner</button>
       <button class="admin-tab" data-tab="redes">Redes</button>
       <button class="admin-tab" data-tab="cupones">Cupones</button>
       <button class="admin-tab" data-tab="estadisticas">Estadísticas</button>
       <button class="admin-tab" data-tab="orden">Orden</button>
     </div>
     <div class="admin-body" id="tab-productos">
-      <button class="new-product-btn" id="newProductBtn">+ Nuevo producto</button>
+      <div style="display:flex; gap:8px; margin-bottom:2px;">
+        <button class="new-product-btn" id="newProductBtn" style="flex:1;">+ Nuevo producto</button>
+        <button class="form-save" id="productsSaveBtn" style="flex-shrink:0; opacity:0.45; pointer-events:none;">Guardar cambios</button>
+      </div>
       <div id="adminList"></div>
     </div>
     <div class="admin-body" id="tab-categorias" style="display:none;">
@@ -1498,15 +1459,14 @@
         </div>
         <small>Los videos deben ser cortos (pocos segundos) para que la tienda cargue rápido. Puedes seleccionar varias imágenes de una vez.</small>
       </div>
+      <div class="form-actions" style="margin-top:14px;">
+        <button class="form-save" id="categoriesSaveBtn" style="opacity:0.45; pointer-events:none;">Guardar cambios</button>
+      </div>
     </div>
     <div class="admin-body" id="tab-estilo" style="display:none;">
       <div class="field">
         <label>Nombre de la tienda</label>
         <input type="text" id="stName">
-      </div>
-      <div class="field">
-        <label>Frase del banner principal</label>
-        <input type="text" id="stTagline">
       </div>
       <div class="style-color-grid">
         <div class="field">
@@ -1607,31 +1567,6 @@
       </div>
     </div>
 
-    <div class="admin-body" id="tab-banner" style="display:none;">
-      <div class="field">
-        <label>Etiqueta pequeña sobre el título</label>
-        <input type="text" id="stHeroTag">
-        <small>Ej. // TODO EN UN SOLO LUGAR</small>
-      </div>
-      <div class="field">
-        <label>Título grande del banner</label>
-        <input type="text" id="stHeroTitle">
-        <small>Ej. Ropa, estilo y extras al precio real.</small>
-      </div>
-      <div class="field">
-        <label>Color del título</label>
-        <input type="color" id="stHeroTitleColor">
-      </div>
-      <div class="field">
-        <label>Texto del botón principal</label>
-        <input type="text" id="stHeroBtn">
-      </div>
-      <div class="form-actions">
-        <button class="form-save" id="bannerSaveBtn">Guardar banner</button>
-        <button class="form-cancel" id="bannerResetBtn">Restablecer</button>
-      </div>
-    </div>
-
     <div class="admin-body" id="tab-redes" style="display:none;">
       <div class="field">
         <label>WhatsApp (número o enlace)</label>
@@ -1666,6 +1601,9 @@
         </div>
       </div>
       <small style="display:block; margin-top:-6px;">El cliente escribe el código en el carrito para obtener el descuento.</small>
+      <div class="form-actions" style="margin-top:14px;">
+        <button class="form-save" id="couponsSaveBtn" style="opacity:0.45; pointer-events:none;">Guardar cambios</button>
+      </div>
     </div>
     <div class="admin-body" id="tab-estadisticas" style="display:none;">
       <div class="field">
@@ -1887,17 +1825,12 @@ let nextId = 1;
 
 const DEFAULT_THEME = {
   name: "PREZZIR",
-  tagline: "Streetwear, básicos y accesorios en un catálogo que se actualiza rápido. Elige talla, color, y arma tu carrito — sin vueltas.",
   yellow: "#ffe600",
   pink: "#ff2d78",
   mint: "#00e0a8",
   asphalt: "#f7f3ec",
   fontDisplay: "Anton",
   fontBody: "Inter",
-  heroTag: "// TODO EN UN SOLO LUGAR",
-  heroTitle: "Ropa, estilo y extras al precio real.",
-  heroTitleColor: "#2b2420",
-  heroBtnText: "Ver catálogo ↓",
   social: { whatsapp:"", instagram:"", tiktok:"", facebook:"" },
   sizes: { hero:92, tagline:17, cardName:14.5, cardPrice:15, btn:32, carousel:62 },
   categories: ["Mujer","Hombre","Unisex","Niños","Accesorios"],
@@ -1906,7 +1839,7 @@ const DEFAULT_THEME = {
   catTabUseImages: false,
   carouselSlides: [],
   coupons: [],
-  sectionOrder: ["hero","stories","catgrid","carousel"],
+  sectionOrder: ["stories","catgrid"],
   flyToCartEnabled: true
 };
 let currentTheme = JSON.parse(JSON.stringify(DEFAULT_THEME));
@@ -2008,7 +1941,6 @@ function updateCategoryView(){
   document.getElementById('grid-wrap').scrollIntoView({behavior:'smooth', block:'start'});
 }
 const REORDERABLE_SECTIONS = [
-  { id:'hero', label:'Banner principal', selector:'.hero' },
   { id:'stories', label:'Destacados', selector:'#stories-wrap-section' },
   { id:'catgrid', label:'Categorías', selector:'#catGridWrap' }
 ];
@@ -2025,13 +1957,11 @@ function applySectionOrder(){
 
 function updateCategoryVisibility(){
   const isHome = activeCat === 'Todos';
-  const hero = document.querySelector('.hero');
   const stories = document.getElementById('stories-wrap-section');
   const catGridWrap = document.getElementById('catGridWrap');
   const sheinBanner = document.getElementById('sheinBanner');
   const catHeader = document.getElementById('categoryPageHeader');
   const hasFeatured = PRODUCTS.some(p=>p.featured);
-  if(hero) hero.style.display = isHome ? '' : 'none';
   if(stories) stories.style.display = (isHome && hasFeatured) ? '' : 'none';
   if(catGridWrap) catGridWrap.style.display = (isHome && !currentTheme.catTabUseImages) ? '' : 'none';
   if(sheinBanner) sheinBanner.style.display = isHome ? '' : 'none';
@@ -3041,10 +2971,22 @@ function submitPin(){
 document.getElementById('pinSubmit')?.addEventListener('click', submitPin);
 pinInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') submitPin(); });
 
+let pendingFeaturedIds = new Set();
+
+function updateProductsSaveBtnState(){
+  const btn = document.getElementById('productsSaveBtn');
+  if(!btn) return;
+  const hasPending = pendingFeaturedIds.size > 0;
+  btn.style.opacity = hasPending ? '1' : '0.45';
+  btn.style.pointerEvents = hasPending ? 'auto' : 'none';
+  btn.textContent = hasPending ? `Guardar cambios (${pendingFeaturedIds.size})` : 'Guardar cambios';
+}
+
 function renderAdminList(){
   const wrap = document.getElementById('adminList');
   if(PRODUCTS.length===0){
     wrap.innerHTML = `<div class="empty-cart">Aún no tienes productos.</div>`;
+    updateProductsSaveBtnState();
     return;
   }
   const featuredCount = PRODUCTS.filter(p=>p.featured).length;
@@ -3064,7 +3006,7 @@ function renderAdminList(){
   `).join('');
 
   wrap.querySelectorAll('[data-act="feature"]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
+    btn.addEventListener('click', ()=>{
       const id = parseInt(btn.dataset.id);
       const p = PRODUCTS.find(x=>x.id===id);
       if(!p.featured && featuredCount >= 20){
@@ -3072,10 +3014,11 @@ function renderAdminList(){
         return;
       }
       p.featured = !p.featured;
-      await updateProductInDB(p);
+      pendingFeaturedIds.add(id);
       renderAdminList();
       renderStories();
-      showToast(p.featured ? 'Producto destacado' : 'Ya no está destacado');
+      updateProductsSaveBtnState();
+      showToast(p.featured ? 'Marcado como destacado — pulsa "Guardar cambios"' : 'Desmarcado — pulsa "Guardar cambios"');
     });
   });
   wrap.querySelectorAll('[data-act="edit"]').forEach(btn=>{
@@ -3090,14 +3033,31 @@ function renderAdminList(){
       PRODUCTS = PRODUCTS.filter(x=>x.id!==id);
       cart = cart.filter(c=>c.productId!==id);
       delete selections[id];
+      pendingFeaturedIds.delete(id);
       renderAdminList();
       renderCategories(); renderFilterSizeChips(); renderGrid(); renderDrawer(); renderStories();
+      updateProductsSaveBtnState();
       showToast('Producto eliminado');
     });
   });
+  updateProductsSaveBtnState();
 }
 
 document.getElementById('newProductBtn')?.addEventListener('click', ()=> openForm(null));
+
+document.getElementById('productsSaveBtn')?.addEventListener('click', async ()=>{
+  if(pendingFeaturedIds.size === 0) return;
+  const ids = [...pendingFeaturedIds];
+  for(const id of ids){
+    const p = PRODUCTS.find(x=>x.id===id);
+    if(p) await updateProductInDB(p);
+  }
+  pendingFeaturedIds.clear();
+  renderAdminList();
+  renderStories();
+  updateProductsSaveBtnState();
+  showToast('Cambios guardados');
+});
 
 /* ---------- FORMULARIO: crear / editar producto ---------- */
 function openForm(id){
@@ -3275,7 +3235,7 @@ document.getElementById('formSaveBtn')?.addEventListener('click', async ()=>{
 });
 
 /* ---------- PESTAÑAS DEL PANEL ADMIN ---------- */
-const TAB_IDS = ['productos','categorias','estilo','tipografia','tamanos','banner','redes','cupones','estadisticas','orden'];
+const TAB_IDS = ['productos','categorias','estilo','tipografia','tamanos','redes','cupones','estadisticas','orden'];
 document.querySelectorAll('.admin-tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
@@ -3287,7 +3247,6 @@ document.querySelectorAll('.admin-tab').forEach(tab=>{
     if(tab.dataset.tab==='estilo') fillStyleForm();
     if(tab.dataset.tab==='tipografia') fillFontForm();
     if(tab.dataset.tab==='tamanos') fillSizesForm();
-    if(tab.dataset.tab==='banner') fillBannerForm();
     if(tab.dataset.tab==='redes') fillSocialForm();
     if(tab.dataset.tab==='cupones') renderCouponManageList();
     if(tab.dataset.tab==='estadisticas') renderStatsTab();
@@ -3348,6 +3307,13 @@ document.getElementById('sectionOrderSaveBtn')?.addEventListener('click', async 
 });
 
 /* ---------- GESTIÓN DE CATEGORÍAS ---------- */
+function markCategoriesDirty(){
+  const btn = document.getElementById('categoriesSaveBtn');
+  if(!btn) return;
+  btn.style.opacity = '1';
+  btn.style.pointerEvents = 'auto';
+}
+
 function renderCatManageList(){
   const wrap = document.getElementById('catManageList');
   wrap.innerHTML = currentTheme.categories.map((c,i)=>{
@@ -3380,8 +3346,8 @@ function renderCatManageList(){
       if(activeCat === removed) activeCat = "Todos";
       renderCatManageList();
       renderCategories();
-      saveThemeToStorage();
-      showToast('Categoría eliminada');
+      markCategoriesDirty();
+      showToast('Categoría quitada — pulsa "Guardar cambios"');
     });
   });
   wrap.querySelectorAll('.cat-img-input').forEach(input=>{
@@ -3394,8 +3360,8 @@ function renderCatManageList(){
         currentTheme.categoryImages[cat] = dataUrl;
         renderCatManageList();
         renderCategories();
-        saveThemeToStorage();
-        showToast('Imagen de categoría actualizada');
+        markCategoriesDirty();
+        showToast('Imagen lista — pulsa "Guardar cambios"');
       });
     });
   });
@@ -3412,8 +3378,8 @@ document.getElementById('addCatBtn')?.addEventListener('click', ()=>{
   input.value = '';
   renderCatManageList();
   renderCategories();
-  saveThemeToStorage();
-  showToast('Categoría añadida');
+  markCategoriesDirty();
+  showToast('Categoría añadida — pulsa "Guardar cambios"');
 });
 
 /* ---------- ESTILO CÍRCULOS vs CARRUSEL (admin) ---------- */
@@ -3428,8 +3394,8 @@ document.getElementById('catStyleToggle')?.addEventListener('click', ()=>{
   currentTheme.catDisplayStyle = currentTheme.catDisplayStyle === 'carousel' ? 'circles' : 'carousel';
   fillCatStyleToggle();
   updateCategoryVisibility();
-  saveThemeToStorage();
-  showToast(currentTheme.catDisplayStyle === 'carousel' ? 'Usando carrusel' : 'Usando círculos');
+  markCategoriesDirty();
+  showToast(currentTheme.catDisplayStyle === 'carousel' ? 'Usando carrusel — pulsa "Guardar cambios"' : 'Usando círculos — pulsa "Guardar cambios"');
 });
 
 function fillCatTabToggle(){
@@ -3444,8 +3410,8 @@ document.getElementById('catTabToggle')?.addEventListener('click', ()=>{
   fillCatTabToggle();
   renderCategories();
   updateCategoryVisibility();
-  saveThemeToStorage();
-  showToast(currentTheme.catTabUseImages ? 'Mostrando fotos arriba' : 'Mostrando iconos arriba');
+  markCategoriesDirty();
+  showToast(currentTheme.catTabUseImages ? 'Mostrando fotos arriba — pulsa "Guardar cambios"' : 'Mostrando iconos arriba — pulsa "Guardar cambios"');
 });
 
 function renderCarouselSlideList(){
@@ -3471,8 +3437,8 @@ function renderCarouselSlideList(){
       currentTheme.carouselSlides.splice(parseInt(btn.dataset.idx), 1);
       renderCarouselSlideList();
       renderPromoCarousel();
-      saveThemeToStorage();
-      showToast('Elemento del carrusel eliminado');
+      markCategoriesDirty();
+      showToast('Elemento quitado — pulsa "Guardar cambios"');
     });
   });
   wrap.querySelectorAll('select.carousel-slide-product').forEach(sel=>{
@@ -3480,8 +3446,8 @@ function renderCarouselSlideList(){
       const idx = parseInt(sel.dataset.idx);
       currentTheme.carouselSlides[idx].productId = sel.value ? parseInt(sel.value) : null;
       renderPromoCarousel();
-      saveThemeToStorage();
-      showToast('Producto vinculado');
+      markCategoriesDirty();
+      showToast('Producto vinculado — pulsa "Guardar cambios"');
     });
   });
 }
@@ -3495,9 +3461,16 @@ function addCarouselSlide(type, url){
   currentTheme.carouselSlides.push({type, url});
   renderCarouselSlideList();
   renderPromoCarousel();
-  saveThemeToStorage();
-  showToast('Añadido al carrusel');
+  markCategoriesDirty();
+  showToast('Añadido — pulsa "Guardar cambios"');
 }
+
+document.getElementById('categoriesSaveBtn')?.addEventListener('click', async ()=>{
+  await saveThemeToStorage();
+  const btn = document.getElementById('categoriesSaveBtn');
+  if(btn){ btn.style.opacity = '0.45'; btn.style.pointerEvents = 'none'; }
+  showToast('Cambios guardados');
+});
 
 document.getElementById('carouselImgInput')?.addEventListener('change', (e)=>{
   const files = Array.from(e.target.files || []);
@@ -3582,29 +3555,6 @@ function applyTheme(theme){
   document.documentElement.style.setProperty('--size-btn', s.btn + 'px');
   document.documentElement.style.setProperty('--size-carousel', (s.carousel != null ? s.carousel : DEFAULT_THEME.sizes.carousel) + '%');
   document.getElementById('logoWord').textContent = theme.name;
-  const taglineEl = document.getElementById('heroTagline');
-  taglineEl.textContent = theme.tagline;
-  taglineEl.style.display = theme.tagline ? 'block' : 'none';
-  const tagEl = document.getElementById('heroTagText');
-  tagEl.textContent = theme.heroTag;
-  tagEl.style.display = theme.heroTag ? 'inline-block' : 'none';
-  const titleEl = document.getElementById('heroTitleEl');
-  const hasCustomTitle = theme.heroTitle !== undefined && theme.heroTitle !== null;
-  titleEl.textContent = hasCustomTitle ? theme.heroTitle : DEFAULT_THEME.heroTitle;
-  titleEl.style.display = (hasCustomTitle && theme.heroTitle === '') ? 'none' : 'block';
-  titleEl.style.color = theme.heroTitleColor || DEFAULT_THEME.heroTitleColor;
-  const btnEl = document.getElementById('heroCtaBtn');
-  btnEl.textContent = theme.heroBtnText;
-  btnEl.style.display = theme.heroBtnText ? 'inline-block' : 'none';
-  const heroSection = document.querySelector('.hero');
-  const titleHidden = titleEl.style.display === 'none';
-  const taglineHidden = taglineEl.style.display === 'none';
-  const btnHidden = btnEl.style.display === 'none';
-  const tagHidden = tagEl.style.display === 'none';
-  if(heroSection){
-    heroSection.classList.toggle('hero-compact', titleHidden && taglineHidden && btnHidden);
-    heroSection.style.display = (titleHidden && taglineHidden && btnHidden && tagHidden) ? 'none' : '';
-  }
   document.title = theme.name + " — Todo. Ahora.";
   renderSocialIcons(theme.social);
   renderPromoCarousel();
@@ -3630,6 +3580,13 @@ function renderSocialIcons(social){
 }
 
 /* ---------- CUPONES (admin) ---------- */
+function markCouponsDirty(){
+  const btn = document.getElementById('couponsSaveBtn');
+  if(!btn) return;
+  btn.style.opacity = '1';
+  btn.style.pointerEvents = 'auto';
+}
+
 function renderCouponManageList(){
   const wrap = document.getElementById('couponManageList');
   if(!wrap) return;
@@ -3646,8 +3603,8 @@ function renderCouponManageList(){
     btn.addEventListener('click', ()=>{
       currentTheme.coupons.splice(parseInt(btn.dataset.idx), 1);
       renderCouponManageList();
-      saveThemeToStorage();
-      showToast('Cupón eliminado');
+      markCouponsDirty();
+      showToast('Cupón quitado — pulsa "Guardar cambios"');
     });
   });
 }
@@ -3669,8 +3626,14 @@ document.getElementById('addCouponBtn')?.addEventListener('click', ()=>{
   codeInput.value = '';
   pctInput.value = '';
   renderCouponManageList();
-  saveThemeToStorage();
-  showToast('Cupón añadido');
+  markCouponsDirty();
+  showToast('Cupón añadido — pulsa "Guardar cambios"');
+});
+document.getElementById('couponsSaveBtn')?.addEventListener('click', async ()=>{
+  await saveThemeToStorage();
+  const btn = document.getElementById('couponsSaveBtn');
+  if(btn){ btn.style.opacity = '0.45'; btn.style.pointerEvents = 'none'; }
+  showToast('Cambios guardados');
 });
 
 /* ---------- CUPONES APLICADOS (tienda) ---------- */
@@ -3864,7 +3827,6 @@ document.addEventListener('click', (e)=>{
 
 function fillStyleForm(){
   document.getElementById('stName').value = currentTheme.name;
-  document.getElementById('stTagline').value = currentTheme.tagline;
   document.getElementById('stYellow').value = currentTheme.yellow;
   document.getElementById('stPink').value = currentTheme.pink;
   document.getElementById('stMint').value = currentTheme.mint;
@@ -3878,13 +3840,6 @@ function fillStyleForm(){
 function fillFontForm(){
   document.getElementById('stFontDisplay').value = currentTheme.fontDisplay;
   document.getElementById('stFontBody').value = currentTheme.fontBody;
-}
-function fillBannerForm(){
-  document.getElementById('stHeroTag').value = currentTheme.heroTag;
-  document.getElementById('stHeroTitle').value = (currentTheme.heroTitle !== undefined && currentTheme.heroTitle !== null) ? currentTheme.heroTitle : DEFAULT_THEME.heroTitle;
-  document.getElementById('stHeroTitleColor').value = currentTheme.heroTitleColor || DEFAULT_THEME.heroTitleColor;
-  document.getElementById('stHeroBtn').value = currentTheme.heroBtnText;
-  buildColorPalette('stHeroTitleColor');
 }
 function fillSocialForm(){
   document.getElementById('stWhatsapp').value = currentTheme.social.whatsapp || '';
@@ -3982,7 +3937,6 @@ async function saveThemeToStorage(){
 
 document.getElementById('styleSaveBtn')?.addEventListener('click', ()=>{
   currentTheme.name = document.getElementById('stName').value.trim();
-  currentTheme.tagline = document.getElementById('stTagline').value.trim();
   currentTheme.yellow = document.getElementById('stYellow').value;
   currentTheme.pink = document.getElementById('stPink').value;
   currentTheme.mint = document.getElementById('stMint').value;
@@ -3993,7 +3947,7 @@ document.getElementById('styleSaveBtn')?.addEventListener('click', ()=>{
   showToast('Colores actualizados');
 });
 document.getElementById('styleResetBtn')?.addEventListener('click', ()=>{
-  Object.assign(currentTheme, {yellow:DEFAULT_THEME.yellow, pink:DEFAULT_THEME.pink, mint:DEFAULT_THEME.mint, asphalt:DEFAULT_THEME.asphalt, name:DEFAULT_THEME.name, tagline:DEFAULT_THEME.tagline, flyToCartEnabled:DEFAULT_THEME.flyToCartEnabled});
+  Object.assign(currentTheme, {yellow:DEFAULT_THEME.yellow, pink:DEFAULT_THEME.pink, mint:DEFAULT_THEME.mint, asphalt:DEFAULT_THEME.asphalt, name:DEFAULT_THEME.name, flyToCartEnabled:DEFAULT_THEME.flyToCartEnabled});
   applyTheme(currentTheme);
   fillStyleForm();
   saveThemeToStorage();
@@ -4014,26 +3968,6 @@ document.getElementById('fontResetBtn')?.addEventListener('click', ()=>{
   fillFontForm();
   saveThemeToStorage();
   showToast('Tipografía restablecida');
-});
-
-document.getElementById('bannerSaveBtn')?.addEventListener('click', ()=>{
-  currentTheme.heroTag = document.getElementById('stHeroTag').value.trim();
-  currentTheme.heroTitle = document.getElementById('stHeroTitle').value.trim();
-  currentTheme.heroTitleColor = document.getElementById('stHeroTitleColor').value;
-  currentTheme.heroBtnText = document.getElementById('stHeroBtn').value.trim();
-  applyTheme(currentTheme);
-  saveThemeToStorage();
-  showToast('Banner actualizado');
-});
-document.getElementById('bannerResetBtn')?.addEventListener('click', ()=>{
-  currentTheme.heroTag = DEFAULT_THEME.heroTag;
-  currentTheme.heroTitle = DEFAULT_THEME.heroTitle;
-  currentTheme.heroTitleColor = DEFAULT_THEME.heroTitleColor;
-  currentTheme.heroBtnText = DEFAULT_THEME.heroBtnText;
-  applyTheme(currentTheme);
-  fillBannerForm();
-  saveThemeToStorage();
-  showToast('Banner restablecido');
 });
 
 document.getElementById('socialSaveBtn')?.addEventListener('click', ()=>{
