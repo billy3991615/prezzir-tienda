@@ -2917,7 +2917,12 @@ async function insertProductToDB(product){
 }
 async function updateProductInDB(product){
   const { error } = await db.from('products').update(productToRow(product)).eq('id', product.id);
-  if(error){ showToast('No se pudo actualizar el producto'); return false; }
+  if(error){ console.error('updateProductInDB error:', error); showToast('No se pudo actualizar el producto'); return false; }
+  return true;
+}
+async function updateProductFeaturedInDB(id, featured){
+  const { error } = await db.from('products').update({ featured: !!featured }).eq('id', id);
+  if(error){ console.error('updateProductFeaturedInDB error:', error); return false; }
   return true;
 }
 async function deleteProductFromDB(id){
@@ -3070,7 +3075,7 @@ document.getElementById('productsSaveBtn')?.addEventListener('click', async ()=>
   for(const id of ids){
     const p = PRODUCTS.find(x=>x.id===id);
     if(!p) continue;
-    const ok = await updateProductInDB(p);
+    const ok = await updateProductFeaturedInDB(id, p.featured);
     if(ok){
       pendingFeaturedIds.delete(id);
     }else{
